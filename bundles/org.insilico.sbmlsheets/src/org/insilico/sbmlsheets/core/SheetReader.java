@@ -3,6 +3,7 @@ package org.insilico.sbmlsheets.core;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class SheetReader {
@@ -18,7 +19,10 @@ public class SheetReader {
 			seperator = findSeperator(line);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.err.println("Error while parsing csv or tsv file");
+			System.err.println("Error while parsing csv or tsv file: Inputerror");
+			e.printStackTrace();
+		} catch (NoSuchElementException e) {
+			System.err.println("Error while parsing csv or tsv file: File empty");
 			e.printStackTrace();
 		}
 		

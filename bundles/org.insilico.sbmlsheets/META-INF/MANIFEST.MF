@@ -22,3 +22,4 @@ Export-Package: org.insilico.sbmlsheets.core,
  org.insilico.sbmlsheets.editor,
  org.insilico.sbmlsheets.services,
  org.insilico.sbmlsheets.services.provider
+Import-Package: org.eclipse.core.databinding.observable.list

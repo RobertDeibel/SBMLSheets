@@ -24,8 +24,7 @@ public class DocumentTreeView {
     @PostConstruct
     private void init(BorderPane parent) {
         TreeView<SBase> docTreeView = new TreeView<>(convertToTreeItem(doc, 2));
-        TextField test = new TextField("das ist ein Test!");
-        parent.setCenter(test);
+        parent.setCenter(docTreeView);
     }
 
     private TreeItem<SBase> convertToTreeItem(SBase elem, int expandLevels) {
