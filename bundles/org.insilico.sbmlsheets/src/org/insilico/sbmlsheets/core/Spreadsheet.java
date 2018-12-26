@@ -44,7 +44,7 @@ public class Spreadsheet {
 	URL fileLocation;
 	
 	public Spreadsheet() {
-		buildHead();
+		head = Row.createHead();
 		data = FXCollections.observableArrayList();
 		for (int i=0; i<INITAIAL_ROWS;i++) {
 			addEmptyRow();
@@ -53,11 +53,10 @@ public class Spreadsheet {
 		tableName = "";
 	}
 	
-	private void buildHead() {
-		head = new Row();
-	}
+
 	@Inject
 	public Spreadsheet(ObservableList<Row> data, String tableType, String tableName) {
+		this.head = data.remove(0);
 		this.data = data;
 		this.tableType = tableType;
 		this.tableName = tableName;
@@ -98,6 +97,32 @@ public class Spreadsheet {
 	
 	public Row getHead() {
 		return head;
+	}
+	
+	public int getRowCount() {
+		return data.size();
+	}
+	
+	public int getColCount() {
+		return head.size();
+	}
+	
+	@Override
+	public String toString() {
+		String headStr = this.head.toString();
+		String[] spreadsheetStrgs = new String[data.size()];
+		for (int i=0;i<data.size();i++) {
+			spreadsheetStrgs[i] = data.get(i).toString();
+		}
+		int strSize = spreadsheetStrgs.length;
+		String seperatorLine = new String(new char[strSize]).replace("\0", "-");
+		String spreadsheet = "";
+		spreadsheet += String.format("%s\n%s\n%s\n%s\n",seperatorLine,headStr,seperatorLine,seperatorLine);
+		for (String s : spreadsheetStrgs) {
+			spreadsheet += String.format("%s\n%s\n", s,seperatorLine);
+		}
+		
+		return spreadsheet;
 	}
 	
 }

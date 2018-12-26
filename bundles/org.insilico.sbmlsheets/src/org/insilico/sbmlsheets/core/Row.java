@@ -3,19 +3,45 @@ package org.insilico.sbmlsheets.core;
 
 import java.util.Iterator;
 
+
 import javafx.beans.property.*;
 import javafx.collections.*;
-
+/**
+ * The class {@link Row} represents a Row inside a {@link Spreadsheet} object. 
+ * 
+ * @author robert
+ *
+ */
 public class Row implements Iterable<StringProperty>{
 	
-	private final int INITIAL_CELLS = 10;
-
-	ObservableList<StringProperty> cells;
+	/**
+	 * The initial number of initiated cells in a {@link Row}. 
+	 * Cells are of {@link StringProperty} type and stored in a {@link ObservableList} called {@link Row.cells}.
+	 */
+	private static final int INITIAL_CELLS = 10;
 	
-	public Row() {
+	/**
+	 * Represents the content of the {@link Row}.
+	 * An {@link ObservableList} filled with data of type {@link StringProperty}.
+	 */
+	private ObservableList<StringProperty> cells;
+	
+	
+	//Methods for creating the head of the Spreadsheet
+	
+	private Row() {
 		cells = FXCollections.observableArrayList();
-		createHeader();
+		for (int i=0;i<INITIAL_CELLS; i++) {
+			cells.add(new SimpleStringProperty(this,Integer.toString(i),"Hier Koennte Ihre Werbung stehen"));
+		}
 	}
+	
+	static Row createHead() {
+		return new Row();
+	}
+	
+	
+	//Methods for the other Rows not associated with the Head
 	
 	public Row(Row head) {
 		cells = FXCollections.observableArrayList();
@@ -23,14 +49,25 @@ public class Row implements Iterable<StringProperty>{
 			addEmptyCell(cell.getName());
 		}
 	}
+	
+	private void addEmptyCell(String name) {
+		cells.add(new SimpleStringProperty(this, name, "bla"));
+	}
+	
+	
+	//Row API
 
 	public StringProperty cellProperty(int index) {
-		if (cells.get(index) == null) cells.add(index, new SimpleStringProperty(this, Integer.toString(index),""));
 		return cells.get(index);
 	}
 	
+	
 	public String getCell(int index) {
 		return cellProperty(index).get();
+	}
+	
+	public String getPropertyName(int index) {
+		return cellProperty(index).getName();
 	}
 	
 	public ObservableList<StringProperty> getAllCells(){
@@ -39,22 +76,32 @@ public class Row implements Iterable<StringProperty>{
 	
 	
 	
-	public void setCell(int index, String rowName, String value) {
+	public void setCell(int index, String value) {
 		cellProperty(index).set(value);
 	}
 	
-	void createHeader() {
-		for (int i=0;i<INITIAL_CELLS; i++) {
-			cells.add(new SimpleStringProperty(this,Integer.toString(i),"Hier Koennte Ihre Werbung stehen"+i));
+	public void setPropertyName(int index, String propName) {
+		cells.set(index, new SimpleStringProperty(this, propName, cellProperty(index).getValue()));
+	}
+	
+	public int size() {
+		return cells.size();
+	}
+	
+	@Override
+	public String toString() {
+		String row = "";
+		for (int i=0; i<cells.size();i++) {
+			row += String.format("| %s |",cellToString(i));
 		}
+		
+		return row;
+		
 	}
 	
-	private void addEmptyCell(String name) {
-		System.out.println(name);
-		cells.add(new SimpleStringProperty(this, name, "bla"+name));
-	}
-	
-	
+	public String cellToString(int index) {
+		return String.format("Value: %s; PropertyName: %s",getCell(index),getPropertyName(index));
+	}						 
 	
 	@Override
 	public Iterator<StringProperty> iterator() {
