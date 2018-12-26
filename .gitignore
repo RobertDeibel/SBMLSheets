@@ -45,15 +45,15 @@ workspace/
 #all files not associated with SBMLSheets but Insilico
 devel/
 releng/
-schripts/
+scripts/
 /pom.xml
 #tests should later be implemented
 tests/
 #folders with SBMLSheets files
-bundels/*
+bundles/*
 features/*
 #don't exclude sbmlsheets files
-!bundels/org.insilico.sbmlsheets
+!bundles/org.insilico.sbmlsheets
 !features/org.insilico.sbmlsheets.feature
 
 
