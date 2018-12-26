@@ -42,4 +42,19 @@ workspace/
 #.project
 .classpath
 
+#all files not associated with SBMLSheets but Insilico
+devel/
+releng/
+schripts/
+/pom.xml
+#tests should later be implemented
+tests/
+#folders with SBMLSheets files
+bundels/*
+features/*
+#don't exclude sbmlsheets files
+!bundels/org.insilico.sbmlsheets
+!features/org.insilico.sbmlsheets.feature
+
+
 
