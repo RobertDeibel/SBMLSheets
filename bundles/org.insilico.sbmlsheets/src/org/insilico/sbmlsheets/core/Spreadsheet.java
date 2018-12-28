@@ -1,29 +1,26 @@
 package org.insilico.sbmlsheets.core;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedList;
 
-import javafx.beans.property.StringProperty;
 import javafx.collections.*;
 
 import javax.inject.Inject;
-
+@SuppressWarnings("restriction")
 public class Spreadsheet {
 	
 	/**
-	 * The number of rows an empty table is initialized with
+	 * The number of {@link Row} objects an empty {@link Spreadsheet} is initialized with
 	 */
 	private final int INITAIAL_ROWS = 30;
 	
 	
 	/**
-	 * The content of the table modelled as rows
+	 * The content of the {@link Spreadsheet} modeled as {@link Row} Objects inside a {@link ObservableList}.
 	 */
 	ObservableList<Row> data;
 	
 	/**
-	 * The names of the columns
+	 * The names of the columns in {@link data} as a {@link Row} object.
 	 */
 	Row head;
 		

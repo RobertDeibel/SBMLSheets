@@ -12,6 +12,7 @@ import javafx.collections.*;
  * @author robert
  *
  */
+@SuppressWarnings("restriction")
 public class Row implements Iterable<StringProperty>{
 	
 	/**
@@ -112,7 +113,7 @@ public class Row implements Iterable<StringProperty>{
 	
 	
 	
-	private class RowIterator implements Iterator{
+	private class RowIterator implements Iterator<StringProperty>{
 		private int position = 0;
 
 		@Override
@@ -125,7 +126,7 @@ public class Row implements Iterable<StringProperty>{
 		}
 
 		@Override
-		public Object next() {
+		public StringProperty next() {
 			if(this.hasNext()) {
 				return cells.get(position++);
 			}else {

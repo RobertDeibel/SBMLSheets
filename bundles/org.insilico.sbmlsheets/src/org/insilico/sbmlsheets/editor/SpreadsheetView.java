@@ -7,17 +7,20 @@ import javax.inject.Inject;
 
 import org.insilico.sbmlsheets.core.Row;
 import org.insilico.sbmlsheets.core.Spreadsheet;
-import org.sbml.jsbml.SBase;
 
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.*;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 
+@SuppressWarnings("restriction")
 public class SpreadsheetView {
 
 	@Inject
@@ -26,17 +29,22 @@ public class SpreadsheetView {
 	@PostConstruct
     private void init(BorderPane parent) {
         TableView<Row> table = setUpTable();
-        table.setVisible(true);
         parent.setCenter(table);
     }
 	
-	@SuppressWarnings("restriction")
+	
 	private TableView<Row> setUpTable(){
 		System.out.println("Setting up SpreadsheetView...");
 		
 		TableView<Row> table = new TableView<Row>();
-		table.setEditable(true);
-		ArrayList<TableColumn<Row, String>> columns = new ArrayList<>();
+		
+		//Custom cellFactory to support Editing of cells.
+//		Callback<TableColumn<Row, String>, TableCell<Row, String>> cellFactory = new Callback<TableColumn<Row, String>, TableCell<Row, String>>() {
+//			@Override
+//			public TableCell<Row, String> call(TableColumn<Row, String> p) {
+//				return new EditingCell();
+//			}
+//		};
 		
 		for (int i=0; i<doc.getColCount();i++) {
 			StringProperty colHead = doc.getHead().cellProperty(i);
@@ -48,12 +56,22 @@ public class SpreadsheetView {
                     return p.getValue().cellProperty(colNo);
                 }
             });
-            
-			columns.add(tc);
+            //own cellFactory to support editing 
+            //was not as perfectly working as the delivered TextFieldTableCell so for now not used.
+//            tc.setCellFactory(cellFactory);
+            tc.setCellFactory(TextFieldTableCell.forTableColumn());
+            tc.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Row,String>>() {
+				
+				@Override
+				public void handle(CellEditEvent<Row, String> event) {
+					((Row) event.getTableView().getItems().get(event.getTablePosition().getRow())).setCell(colNo, event.getNewValue());
+				}
+			});
 			table.getColumns().add(tc);
 
 			
 		}
+		table.setEditable(true);
 		table.setItems(doc.getData());
 		
         

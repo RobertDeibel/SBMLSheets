@@ -1,6 +1,5 @@
 package org.insilico.sbmlsheets.editor;
 
-import java.awt.TextArea;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,8 +13,8 @@ import org.sbml.jsbml.SBase;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.control.TextField;
 
+@SuppressWarnings("restriction")
 public class DocumentTreeView {
 
     @Inject
