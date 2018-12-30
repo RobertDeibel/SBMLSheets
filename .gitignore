@@ -55,6 +55,6 @@ features/*
 #don't exclude sbmlsheets files
 !bundles/org.insilico.sbmlsheets
 !features/org.insilico.sbmlsheets.feature
-
+!scripts/config
 
 
