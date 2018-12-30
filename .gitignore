@@ -45,7 +45,7 @@ workspace/
 #all files not associated with SBMLSheets but Insilico
 devel/
 releng/
-scripts/
+scripts/*
 /pom.xml
 #tests should later be implemented
 tests/
