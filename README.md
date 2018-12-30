@@ -6,9 +6,9 @@
 
 Clone and install [InSilico](https://github.com/draeger-lab/insilico "Draeger Lab: Insilico")
 ### Set up SBMLSheets
-### Commandline for Unix systems (recomended)
+#### Command line for Unix systems (recomended)
 
-Clone [SBMLSheets](https://github.com/RobertDeibel/SBMLSheets)
+Clone [SBMLSheets](https://github.com/RobertDeibel/SBMLSheets):
 ```
 #clone and move files 
 git clone https://github.com/RobertDeibel/SBMLSheets
