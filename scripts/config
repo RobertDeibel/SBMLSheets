@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# exit when command fails
+set -e
+
+
+echo "starting setup of SBMLSheets"
+
+# check if parameter is provided
+if [ "$#" != "1" ]; then
+	echo "Provide the insilico directory as parameter"
+	echo "stoping setup"
+	exit 4
+fi
+
+insilicoDir="$1"
+
+# checking if path is provided with "/" at end
+# if not setting it
+if [[ "$insilicoDir" != *"/" ]]; then
+	insilicoDir="$insilicoDir/"
+fi
+
+
+
+echo "moving SBMLSheets bundle to ${insilicoDir}bundles/"
+
+is_in_dir=false
+
+for line in `find "${insilicoDir}bundles/" -mindepth 1 -maxdepth 1`; do
+	if [[ $line == "${insilicoDir}bundles/org.insilico.sbmlsheets" ]]; then
+		is_in_dir=true
+	fi
+done
+
+if [ "$is_in_dir" = false ]; then
+
+	mv ../bundles/* "${insilicoDir}bundles/"
+fi
+
+is_in_dir=false
+
+echo "moving SBMLSheets feature to ${insilicoDir}features/"
+
+for line in `find "${insilicoDir}features/" -mindepth 1 -maxdepth 1`; do
+	if [[ $line == "${insilicoDir}features/org.insilico.sbmlsheets.feature" ]]; then
+		is_in_dir=true
+	fi
+done
+
+if [ "$is_in_dir" = false ]; then
+
+	mv ../features/* "${insilicoDir}features/"
+fi
+
+echo "all files moved"
+
+
+echo "installing to insilico"
+insert="<module>org\.insilico\.sbmlsheets<\/module>"
+
+# first setup the bundles/pom.xml
+file="${insilicoDir}bundles/pom.xml"
+
+echo "checking if SBMLSheets already exists in $file"
+# checking if a line can be associated with SBMLSheets bundle
+for line in `cat "${file}"`; do
+	if [[ $line == $insert ]]; then
+        	echo "SBMLSheets entry found...skipping insertion"
+		insert=""
+		break
+	fi
+done
+
+# if no entry exists: insert the line associated with SBMLSheets
+if [[ $insert != "" ]]; then
+	echo "inserting SBMLSheets into $file"
+	match="<module>org\.insilico\.ui\.components<\/module>"
+	sed -i "s/${match}/${match}\n\t\t${insert}/" $file
+fi
+
+insert="<module>org\.insilico\.sbmlsheets\.feature<\/module>"
+
+# setup features/pom.xml
+file="${insilicoDir}features/pom.xml"
+echo "checking if SBMLSheets already exists in $file"
+# checking if a line can be assiciated with SBMLSheets feature
+for line in `cat "$file"`; do
+	if [[ $line == $insert ]]; then
+		echo "SBMLSheets entry found...skipping insertion"
+		insert=""
+		break
+	fi
+done
+
+# if no entry exists: insert the line associated with SBMLSheets
+if [[ $insert != "" ]]; then 
+	echo "inserting SBMLSheets into $file"
+	match="<module>org\.insilico\.core\.feature<\/module>"
+	sed -i "s/${match}/${match}\n\t\t${insert}/" $file
+fi
+
+
+# done
+echo "setup of SBMLSheets finished"
+
+
