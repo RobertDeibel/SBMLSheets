@@ -1,8 +1,11 @@
 package org.insilico.sbmlsheets.core;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.collections.*;
+import javafx.util.Callback;
 
 import javax.inject.Inject;
 @SuppressWarnings("restriction")
@@ -52,13 +55,27 @@ public class Spreadsheet {
 	
 
 	@Inject
-	public Spreadsheet(ObservableList<Row> data, String tableType, String tableName) {
-		this.head = data.remove(0);
-		this.data = data;
+	public Spreadsheet(List<List<String>> data, String tableType, String tableName) {
+		this.head = Row.createHead(data.remove(0));
+		this.data = FXCollections.observableArrayList(convert(data));
+		fillData();
 		this.tableType = tableType;
 		this.tableName = tableName;
 	}
 
+	private List<Row> convert(List<List<String>> data) {
+		List<Row> table = new ArrayList<Row>(data.size());
+		for (List<String> row : data) {
+			table.add(new Row(row, head));
+		}
+		return table;
+	}
+
+	private void fillData() {
+		while(data.size() < INITAIAL_ROWS) {
+			addEmptyRow();
+		}
+	}
 	public Row getRow(int index){
 		return data.get(index);
 	}
