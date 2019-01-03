@@ -138,5 +138,17 @@ public class Spreadsheet {
 		
 		return spreadsheet;
 	}
+
+
+	public void save() {
+		System.out.println("HIER WIRD GERADE GESPEICHERT");
+	}
+
+
+	public void updatePropertyNames(int colNo, String propName) {
+		for (Row row : data) {
+			row.setPropertyName(colNo, propName);
+		}
+	}
 	
 }
