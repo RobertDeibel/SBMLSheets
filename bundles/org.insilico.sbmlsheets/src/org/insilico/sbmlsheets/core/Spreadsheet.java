@@ -25,7 +25,7 @@ public class Spreadsheet {
 	/**
 	 * The names of the columns in {@link data} as a {@link Row} object.
 	 */
-	Row head;
+	HeadRow head;
 		
 	/**
 	 * Which type of SBML table is represented
@@ -44,7 +44,7 @@ public class Spreadsheet {
 	URL fileLocation;
 	
 	public Spreadsheet() {
-		head = Row.createHead();
+		head = HeadRow.createHead();
 		data = FXCollections.observableArrayList();
 		for (int i=0; i<INITAIAL_ROWS;i++) {
 			addEmptyRow();
@@ -56,7 +56,7 @@ public class Spreadsheet {
 
 	@Inject
 	public Spreadsheet(List<List<String>> data, String tableType, String tableName) {
-		this.head = Row.createHead(data.remove(0));
+		this.head = HeadRow.createHead(data.remove(0));
 		this.data = FXCollections.observableArrayList(convert(data));
 		fillData();
 		this.tableType = tableType;

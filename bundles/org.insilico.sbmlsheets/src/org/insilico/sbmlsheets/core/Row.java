@@ -9,7 +9,7 @@ import javafx.collections.*;
 /**
  * The class {@link Row} represents a Row inside a {@link Spreadsheet} object. 
  * 
- * @author robert
+ * @author Robert Deibel
  *
  */
 @SuppressWarnings("restriction")
@@ -17,66 +17,24 @@ public class Row implements Iterable<StringProperty>{
 	/**
 	 * The value of an empty String property in a {@link Row}.
 	 */
-	private static final String INIT_CELL_VALUE = "bla";
-	/**
-	 * The value of an empty String property in a header {@link Row}.
-	 */
-	private static final String INIT_HEADER_VALUE = "Hier koennte Ihre Werbung stehen";
+	protected static final String INIT_CELL_VALUE = "bla";
+
 	/**
 	 * The initial number of initiated cells in a {@link Row}. 
 	 * Cells are of {@link StringProperty} type and stored in a {@link ObservableList} called {@link Row.cells}.
 	 */
-	private static final int INITIAL_CELLS = 10;
+	protected static final int INITIAL_CELLS = 10;
 	
 	/**
 	 * Represents the content of the {@link Row}.
 	 * An {@link ObservableList} filled with data of type {@link StringProperty}.
 	 */
-	private ObservableList<StringProperty> cells;
+	protected ObservableList<StringProperty> cells;
 	
 	
 	//Methods for creating the head of the Spreadsheet
 	
-	/**
-	 * Private constructor {@link Row} object without parameters.
-	 * Only to be used for creation of a dummy header {@link Row} through {@link #createHead()}.
-	 */
-	private Row() {
-		cells = FXCollections.observableArrayList();
-		for (int i=0;i<INITIAL_CELLS; i++) {
-			cells.add(new SimpleStringProperty(this,Integer.toString(i),INIT_HEADER_VALUE));
-		}
-	}
-	/**
-	 * Private constructor for {@link Row} with the contents of a header as a parameter.
-	 * For creation of a header {@link Row} through {@link #createHead(List)}.
-	 * The contents of {@code head} are stored as {@code name} and {@code value} of the {@link cells} fields.
-	 * @param head The value and name of the header cells as a {@link List}
-	 */
-	private Row(List<String> head) {
-		cells = FXCollections.observableArrayList();
-		//iterate through every value of head
-		for (String name : head) {
-			//bind (bean, name, value) to a new StringProperty 
-			cells.add(new SimpleStringProperty(this, name, name));
-		}	
-	}
-	/**
-	 * Method for calling the parameterless private constructor {@link #Row()} of {@link Row}.
-	 * @return A {@link Row} object representing an empty header of a {@link Spreadsheet}.
-	 */
-	static Row createHead() {
-		return new Row();
-	}
-	
-	/**
-	 * Method for calling the one-parameter private constructor {@link #Row(List)} of {@link Row}.
-	 * @param head The value and name of the header cells as a {@link List}
-	 * @return A {@link Row} object representing the header of a {@link Spreadsheet}.
-	 * {@link cells} is filled with the contents of {@code head}. 
-	 */
-	public static Row createHead(List<String> head) {
-		return new Row(head);
+	protected Row() {
 		
 	}
 
@@ -160,18 +118,31 @@ public class Row implements Iterable<StringProperty>{
 	}
 	
 	
-	
+	/**
+	 * Sets the property value of the field in {@link #cells} at {@code index} to {@code value}.
+	 * @param index The index of the cell
+	 * @param value The value to be set
+	 */
 	public void setCell(int index, String value) {
 		cellProperty(index).set(value);
 	}
-	
+	/**
+	 * Creates a new Property and sets the name as {@code propName} and the value as before.
+	 * The new property is written to {@link #cells} at {@code index}.
+	 * @param index  The index of the cell
+	 * @param propName The name to be set as property name
+	 */
 	public void setPropertyName(int index, String propName) {
 		cells.set(index, new SimpleStringProperty(this, propName, cellProperty(index).getValue()));
 	}
-	
+	/**
+	 * Returns the number of {@link StringProperty} stored in {@link #cells}.
+	 * @return The number of {@link StringProperty} stored in {@link #cells}
+	 */
 	public int size() {
 		return cells.size();
 	}
+	
 	
 	@Override
 	public String toString() {
@@ -184,6 +155,11 @@ public class Row implements Iterable<StringProperty>{
 		
 	}
 	
+	/**
+	 * Helper for {@link #toString()}. Returns a textual representation of the cell at {@code index}.
+	 * @param index The index of the cell
+	 * @return A textual representation of the cell at {@code index}.
+	 */
 	public String cellToString(int index) {
 		return String.format("Value: %s; PropertyName: %s",getCell(index),getPropertyName(index));
 	}						 
@@ -196,8 +172,12 @@ public class Row implements Iterable<StringProperty>{
 	
 	
 	
-	
-	private class RowIterator implements Iterator<StringProperty>{
+	/**
+	 * The {@link Iterator} implementation for {@link Row}.
+	 * @author Robert Deibel
+	 *
+	 */
+	protected class RowIterator implements Iterator<StringProperty>{
 		private int position = 0;
 
 		@Override
