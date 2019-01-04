@@ -9,7 +9,7 @@ public class SpreadsheetEditorProvider implements EditorClassURLProvider {
 
     @Override
     public boolean test(String t) {
-        return t.endsWith("csv") || t.endsWith("tsv");
+        return t.endsWith("csv") || t.endsWith("tsv") || t.endsWith("sheets");
     }
 
     @Override

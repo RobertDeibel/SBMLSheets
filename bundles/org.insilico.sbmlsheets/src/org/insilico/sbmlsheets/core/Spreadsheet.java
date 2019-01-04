@@ -38,12 +38,11 @@ public class Spreadsheet {
 	String tableName;
 	
 	/**
-	 * The location of the table
+	 * The location of the table in the file system
 	 */
-	@Inject
-	URL fileLocation;
+	String fileLocation;
 	
-	public Spreadsheet() {
+	public Spreadsheet(String uri) {
 		head = HeadRow.createHead();
 		data = FXCollections.observableArrayList();
 		for (int i=0; i<INITAIAL_ROWS;i++) {
@@ -51,16 +50,18 @@ public class Spreadsheet {
 		}
 		tableType = "";
 		tableName = "";
+		this.fileLocation = uri;
 	}
 	
 
 	@Inject
-	public Spreadsheet(List<List<String>> data, String tableType, String tableName) {
+	public Spreadsheet(List<List<String>> data, String tableType, String tableName, String uri) {
 		this.head = HeadRow.createHead(data.remove(0));
 		this.data = FXCollections.observableArrayList(convert(data));
 		fillData();
 		this.tableType = tableType;
 		this.tableName = tableName;
+		this.fileLocation = uri;
 	}
 
 	private List<Row> convert(List<List<String>> data) {
@@ -141,7 +142,7 @@ public class Spreadsheet {
 
 
 	public void save() {
-		System.out.println("HIER WIRD GERADE GESPEICHERT");
+		SheetWriter.writeSheetToFile(fileLocation, toCSVFormat());
 	}
 
 
@@ -149,6 +150,16 @@ public class Spreadsheet {
 		for (Row row : data) {
 			row.setPropertyName(colNo, propName);
 		}
+	}
+	
+	public String toCSVFormat() {
+		String out = "";
+		out += String.format("%s\n", head.toCSVFormat());
+		for (Row row : data) {
+			out += String.format("%s\n", row.toCSVFormat());
+		}
+		return out;
+		
 	}
 	
 }

@@ -13,11 +13,10 @@ public class SheetReader {
 	private static final char DEFAULTQUOTE ='"';
 	
 	public static Spreadsheet readSheetFromFile(String uri) {
-		LinkedList<LinkedList<String>> content = new LinkedList<LinkedList<String>>();
 		
 		try (Scanner s = new Scanner(new FileReader(uri))){
 			if(!s.hasNextLine()) {
-				return new Spreadsheet();
+				return new Spreadsheet(uri);
 			}
 			List<List<String>> data = new ArrayList<>();
 			while (s.hasNextLine()) {
@@ -25,7 +24,7 @@ public class SheetReader {
 				data.add(line);
 			}
 			s.close();
-			return new Spreadsheet(data, "", "");
+			return new Spreadsheet(data, "", "", uri);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -36,7 +35,7 @@ public class SheetReader {
 //			e.printStackTrace();
 		}
 		
-		return new Spreadsheet();
+		return new Spreadsheet(uri);
 	}
 	
 	private static List<String> parseLine(String nextLine) {
@@ -113,6 +112,31 @@ public class SheetReader {
         result.add(curVal.toString());
 
         return result;
+	}
+
+	public static Spreadsheet readProjectFromFile(String uri) {
+		
+		try (Scanner s = new Scanner(new FileReader(uri))){
+			if(!s.hasNextLine()) {
+				return new SheetProject(uri);
+			}
+			List<List<String>> data = new ArrayList<>();
+			while (s.hasNextLine()) {
+				List<String> line = parseLine(s.nextLine());
+				data.add(line);
+			}
+			s.close();
+			return new SheetProject(data, uri);
+			
+		} catch (IOException e) {
+			System.err.println("Error while parsing csv or tsv file: Inputerror");
+			e.printStackTrace();
+		} catch (NoSuchElementException e) {
+			System.err.println("Error while parsing csv or tsv file: File empty");
+//			e.printStackTrace();
+		}
+		
+		return new SheetProject(uri);
 	}
 
 
