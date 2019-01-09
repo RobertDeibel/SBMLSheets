@@ -116,7 +116,7 @@ public class SheetReader {
 
 	public static SheetProject readProjectFromFile(String uri) {
 		//TODO
-		return new SheetProject();
+		return new SheetProject(uri);
 	}
 
 
