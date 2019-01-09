@@ -9,6 +9,12 @@ import javafx.util.Callback;
 
 import javax.inject.Inject;
 @SuppressWarnings("restriction")
+/**
+ * {@link Spreadsheet} models a Spreadsheet with rows of type {@link Row} saved in {@link data} the column names are stored in {@link head} which is of type {@link HeadRow}
+ * 
+ * @author Robert Deibel
+ *
+ */
 public class Spreadsheet {
 	
 	/**
@@ -42,6 +48,10 @@ public class Spreadsheet {
 	 */
 	String fileLocation;
 	
+	/**
+	 * Constructor for an empty {@link Spreadsheet}
+	 * @param uri The location of the representing CSV
+	 */
 	public Spreadsheet(String uri) {
 		head = HeadRow.createHead();
 		data = FXCollections.observableArrayList();
@@ -53,17 +63,29 @@ public class Spreadsheet {
 		this.fileLocation = uri;
 	}
 	
-
+	/**
+	 * Constructor for a pre-filled {@link Spreadsheet}
+	 * @param data The contents of the {@link Spreadsheet}
+	 * @param tableType The type of table 
+	 * @param tableName The Name of the Table
+	 * @param uri The location of the representing CSV
+	 */
 	@Inject
 	public Spreadsheet(List<List<String>> data, String tableType, String tableName, String uri) {
 		this.head = HeadRow.createHead(data.remove(0));
 		this.data = FXCollections.observableArrayList(convert(data));
-		fillData();
+		fillTable();
 		this.tableType = tableType;
 		this.tableName = tableName;
 		this.fileLocation = uri;
 	}
-
+	
+	/**
+	 * Converts given data of a pre-filled table into a {@link Spreadsheet} representation. 
+	 * Called by the constructor {@link #Spreadsheet(List, String, String, String)}.
+	 * @param data The contents of the {@link Spreadsheet} as read from a csv.
+	 * @return The data wrapped as {@link Row} objects contained in a {@link List}.
+	 */
 	private List<Row> convert(List<List<String>> data) {
 		List<Row> table = new ArrayList<Row>(data.size());
 		for (List<String> row : data) {
@@ -71,16 +93,28 @@ public class Spreadsheet {
 		}
 		return table;
 	}
-
-	private void fillData() {
+	
+	/**
+	 * Fills {@link #data} with empty {@link Row} objects if the minimum row number is not reached.
+	 */
+	private void fillTable() {
 		while(data.size() < INITAIAL_ROWS) {
 			addEmptyRow();
 		}
 	}
+	/**
+	 * Return the {@link Row} at the given index.
+	 * @param index The index of the {@link Row} to be returned.
+	 * @return The {@link Row} at {@code index}.
+	 */
 	public Row getRow(int index){
 		return data.get(index);
 	}
 	
+	/**
+	 * 
+	 * @param row
+	 */
 	public void setLastRow(Row row) {
 		data.add(row);
 		addEmptyRow();

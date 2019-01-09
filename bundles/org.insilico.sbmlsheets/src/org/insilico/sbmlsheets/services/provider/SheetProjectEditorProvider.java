@@ -1,19 +1,19 @@
 package org.insilico.sbmlsheets.services.provider;
 
 import org.eclipse.fx.code.editor.fx.e4.EditorClassURLProvider;
-import org.insilico.sbmlsheets.editor.SpreadsheetView;
+import org.insilico.sbmlsheets.editor.SheetProjectView;
 import org.osgi.service.component.annotations.Component;
 
 @Component
-public class SpreadsheetEditorProvider implements EditorClassURLProvider {
+public class SheetProjectEditorProvider implements EditorClassURLProvider {
 
     @Override
     public boolean test(String t) {
-        return t.endsWith("csv");
+        return t.endsWith("sheets");
     }
 
     @Override
     public String getBundleClassURI(String uri) {
-        return "bundleclass://org.insilico.sbmlsheets/" + SpreadsheetView.class.getName();
+        return "bundleclass://org.insilico.sbmlsheets/" + SheetProjectView.class.getName();
     }
 }

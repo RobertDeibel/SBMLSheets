@@ -114,29 +114,9 @@ public class SheetReader {
         return result;
 	}
 
-	public static Spreadsheet readProjectFromFile(String uri) {
-		
-		try (Scanner s = new Scanner(new FileReader(uri))){
-			if(!s.hasNextLine()) {
-				return new SheetProject(uri);
-			}
-			List<List<String>> data = new ArrayList<>();
-			while (s.hasNextLine()) {
-				List<String> line = parseLine(s.nextLine());
-				data.add(line);
-			}
-			s.close();
-			return new SheetProject(data, uri);
-			
-		} catch (IOException e) {
-			System.err.println("Error while parsing csv or tsv file: Inputerror");
-			e.printStackTrace();
-		} catch (NoSuchElementException e) {
-			System.err.println("Error while parsing csv or tsv file: File empty");
-//			e.printStackTrace();
-		}
-		
-		return new SheetProject(uri);
+	public static SheetProject readProjectFromFile(String uri) {
+		//TODO
+		return new SheetProject();
 	}
 
 
