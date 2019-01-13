@@ -115,7 +115,41 @@ public class SheetReader {
 	}
 
 	public static SheetProject readProjectFromFile(String uri) {
-		//TODO
+		List<String> args = new ArrayList<String>();
+		try (Scanner s = new Scanner(new FileReader(uri))){
+			List<String> paths = new ArrayList<String>();
+			List<String> names = new ArrayList<String>();
+			if(!s.hasNextLine()) {
+				return new SheetProject(uri);
+			}
+			
+			while (s.hasNextLine()) {
+				String[] line = s.nextLine().split("=");
+				if(!line[0].equals("SHEETS")) {
+					args.add(line[1]);
+				} else {
+					String namePathPair = s.nextLine();
+					
+					while (!namePathPair.equals("}")) {
+						paths.add(namePathPair.split(":")[0]);
+						names.add(namePathPair.split(":")[1]);
+						namePathPair = s.nextLine();
+					}
+				}
+				
+			}
+			s.close();
+			return new SheetProject(uri, args.get(0), args.get(1), paths, names);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.err.println("Error while parsing csv or tsv file: Inputerror");
+			e.printStackTrace();
+		} catch (NoSuchElementException e) {
+			System.err.println("Error while parsing csv or tsv file: File empty");
+//			e.printStackTrace();
+		}
+		
 		return new SheetProject(uri);
 	}
 

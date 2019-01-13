@@ -22,14 +22,9 @@ public class SheetWriter {
 	}
 
 	public static void newCSV(String filePath) {
-			try {
-				FileWriter writer = new FileWriter(filePath,false);
-				writer.write("");
-				writer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			writeSheetToFile(filePath, "");
 	}
+
 
 
 }
