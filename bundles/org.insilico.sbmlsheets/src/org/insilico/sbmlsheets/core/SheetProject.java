@@ -149,7 +149,7 @@ public class SheetProject{
 	}
 
 
-	public void addPathAndName(String path, String name) {
+	public void addPathNameType(String path, String name, String type) {
 		if (!paths.contains(name) && !names.containsValue(name)) {
 			addPath(path);
 			addNameToPath(path, name);
