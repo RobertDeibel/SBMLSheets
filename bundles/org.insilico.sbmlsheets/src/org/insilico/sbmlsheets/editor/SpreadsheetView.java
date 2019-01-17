@@ -24,22 +24,39 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 
+/**
+ * Initializes and sets the View of an injected {@link Spreadsheet} object.
+ * @author Robert Deibel
+ *
+ */
 @SuppressWarnings("restriction")
 public class SpreadsheetView {
 	
+	/**
+	 * The {@link Spreadsheet} provided by {@link SpreadsheetDocumentLoader} and injected into this class.
+	 */
 	@Inject
 	private Spreadsheet doc;
 	
+	/**
+	 * Is called after {@link #doc} is injected.
+	 * Constructs the View and sets it in {@code parent}.
+	 * @param parent The parent {@link Node} of the {@link SpreadsheetView}.
+	 */
 	@PostConstruct
     private void init(BorderPane parent) {
         TableView<Row> table = setUpTable();
         parent.setCenter(table);
     }
 	
-	
+	/**
+	 * Creates a {@link TableView} including the setup of columns and Values.
+	 * @return The {@link TableView} representing the {@link Spreadsheet} object in {@link #doc}.
+	 */
 	private TableView<Row> setUpTable(){
 		System.out.println("Setting up SpreadsheetView...");
 		
+		//set the basic TableView with custom sorting policy and a KeyEvent Handler.
 		TableView<Row> table = initTable();
 		
 		
@@ -51,15 +68,22 @@ public class SpreadsheetView {
 //			}
 //		};
 		
+		//for every column create a new TableColumn
 		for (int i=0; i<doc.getColCount();i++) {
+			//get the property of the head
 			StringProperty colHead = doc.getHead().cellProperty(i);
+			//set it as initial TableColumn value
 			TableColumn<Row, String> tc = new TableColumn<>(colHead.getValue());
+			//finalize the column number for use in cellValueFactory(int)
             final int colNo = i;
+            //set the CellValueFactory
             tc.setCellValueFactory(cellValueFactory(colNo));
             //own cellFactory to support editing 
             //was not as perfectly working as the delivered TextFieldTableCell so for now not used.
 //            tc.setCellFactory(cellFactory);
+            //set the CellFactory to allow editing
             tc.setCellFactory(TextFieldTableCell.forTableColumn());
+            //set behavior 
             tc.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Row,String>>() {
 				
 				@Override
@@ -84,6 +108,14 @@ public class SpreadsheetView {
 		return table;
 	}
 	
+	/**
+	 * Returns a {@link TableView} instance with a custom {@link SortPolicy} and a {@link KeyEvent} {@link EventHandler}.
+	 * The custom {@link SortPolicy} sorts the {@link TableColumn} as per default but the {@link HeadRow} is always placed at the top.
+	 * The {@link EventHandler} registers {@link KeyEvents} and saves the {@link Spreadsheet} in {@link doc} through {@link org.insilico.sbmlsheets.core.Spreadsheet#save()} when
+	 * Ctrl+F11 is detected.
+	 * 
+	 * @return A {@link TableView} instance with a custom {@link SortPolicy} and a {@link KeyEvent} {@link EventHandler}.
+	 */
 	private TableView<Row> initTable(){
 		TableView<Row> table =  new TableView<Row>();
 		
@@ -100,7 +132,7 @@ public class SpreadsheetView {
 			return true;
 				
 		});
-		
+		//enable saving with press of Ctrl+F11
 		table.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -115,7 +147,13 @@ public class SpreadsheetView {
 		return table;
 	}
 	
-	private static Callback<CellDataFeatures<Row, String>, ObservableValue<String>> cellValueFactory(int colNo) {
+	/**
+	 * Returns a newly constructed {@link CellValueFactory} for a column of {@link #doc}. 
+	 * It binds the typed value to the property in {@link org.insilico.sbmlsheets.core.Row#cellProperty(int)}.
+	 * @param colNo The column of {@link #doc}
+	 * @return A newly constructed {@link CellValueFactory} for a column of {@link #doc}
+	 */
+	private static Callback<CellDataFeatures<Row, String>, ObservableValue<String>> cellValueFactory(final int colNo) {
 		return new Callback<CellDataFeatures<Row, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(CellDataFeatures<Row, String> p) {

@@ -1,11 +1,9 @@
 package org.insilico.sbmlsheets.core;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javafx.collections.*;
-import javafx.util.Callback;
 
 import javax.inject.Inject;
 @SuppressWarnings("restriction")
@@ -102,6 +100,7 @@ public class Spreadsheet {
 			addEmptyRow();
 		}
 	}
+	
 	/**
 	 * Return the {@link Row} at the given index.
 	 * @param index The index of the {@link Row} to be returned.
@@ -112,30 +111,52 @@ public class Spreadsheet {
 	}
 	
 	/**
-	 * 
-	 * @param row
+	 * Sets {@code row} as the last entry in {@link #data} and adds an empty {@link Row}. 
+	 * @param row A {@link Row} object to be added to the end of {@link #data}.
 	 */
 	public void setLastRow(Row row) {
 		data.add(row);
 		addEmptyRow();
 	}
 	
+	/**
+	 * Adds an empty {@link Row} at the specified index in the list.
+	 * @param index The index to insert the empty {@link Row}.
+	 */
 	public void addEmptyRowAt(int index) {
 		data.add(index, new Row(head));
 	}
 	
+	/**
+	 * Adds an empty {@link Row} at the end of {@link #data}.
+	 */
 	public void addEmptyRow() {
 		data.add(new Row(head));
 	}
 	
-	
+	/**
+	 * Overrides the {@link Row} at the specified {@code index} in {@link #data}.
+	 * @param index The index to insert {@code row}.
+	 * @param row The {@link Row} to be inserted.
+	 */
 	public void modifyRow(int index, Row row) {
 		data.set(index, row);
 	}
 	
+	/**
+	 * Returns {@link #data} containing {@link Row} object, representing the data of the {@link Spreadsheet}.
+	 * @return {@link #data} containing {@link Row} object, representing the data of the {@link Spreadsheet}.
+	 */
 	public ObservableList<Row> getData(){
 		return data;
 	}
+	
+	/**
+	 * Returns {@link #data} and {@link #head} in a single {@link ObservableList} of {@link Row} objects, 
+	 * representing the data and the column heads of the {@link Spreadsheet}.
+	 * @return {@link #data} and {@link #head} in a single {@link ObservableList} of {@link Row} objects, 
+	 * representing the data and the column heads of the {@link Spreadsheet}.
+	 */
 	public ObservableList<Row> getDataAndHead() {
 		ObservableList<Row> dataAndHead = FXCollections.observableArrayList();
 		dataAndHead.add(head);
@@ -144,16 +165,61 @@ public class Spreadsheet {
 		return dataAndHead;
 	}
 	
+	/**
+	 * Return the {@link #head} of the {@link Spreadsheet} represented by a {@link Row} object. 
+	 * {@link #head} contains the column names as {@code value} and property {@code name}.
+	 * @return The {@link #head} of the {@link Spreadsheet} represented by a {@link Row} object. 
+	 */
 	public Row getHead() {
 		return head;
 	}
 	
+	/**
+	 * Returns the number of rows in the {@link Spreadsheet}, without the {@link #head}.
+	 * @return The number of rows in the {@link Spreadsheet}, without the {@link #head}.
+	 */
 	public int getRowCount() {
 		return data.size();
 	}
 	
+	/**
+	 * Returns the number of columns in the {@link Spreadsheet}.
+	 * @return The number of columns in the {@link Spreadsheet}.
+	 */
 	public int getColCount() {
 		return head.size();
+	}
+
+	/**
+	 * Saves the {@link Spreadsheet} to the location specified at {@link #fileLocation}.
+	 */
+	public void save() {
+		SheetWriter.writeSheetToFile(fileLocation, toCSVFormat());
+	}
+
+	/**
+	 * changes the property names of a column.
+	 * @param colNo The number of the column
+	 * @param propName The new property name.
+	 */
+	public void updatePropertyNames(int colNo, String propName) {
+		for (Row row : data) {
+			row.setPropertyName(colNo, propName);
+		}
+	}
+	
+	/**
+	 * Formats the {@link Spreadsheet} to a csv representation.
+	 * @return The {@link Spreadsheet} in a csv representation.
+	 */
+	public String toCSVFormat() {
+		String out = "";
+		out += String.format("%s\n", head.toCSVFormat());
+		for (Row row : data) {
+			out += String.format("%s\n", row.toCSVFormat());
+		}
+		return out;
+		
 	}
 	
 	@Override
@@ -172,28 +238,6 @@ public class Spreadsheet {
 		}
 		
 		return spreadsheet;
-	}
-
-
-	public void save() {
-		SheetWriter.writeSheetToFile(fileLocation, toCSVFormat());
-	}
-
-
-	public void updatePropertyNames(int colNo, String propName) {
-		for (Row row : data) {
-			row.setPropertyName(colNo, propName);
-		}
-	}
-	
-	public String toCSVFormat() {
-		String out = "";
-		out += String.format("%s\n", head.toCSVFormat());
-		for (Row row : data) {
-			out += String.format("%s\n", row.toCSVFormat());
-		}
-		return out;
-		
 	}
 	
 }

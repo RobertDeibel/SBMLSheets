@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class SheetWriter {
 	
-	
+
 	public static void writeSheetToFile(String uri, String out) {
 		try {
 			FileWriter writer = new FileWriter(uri, false);
