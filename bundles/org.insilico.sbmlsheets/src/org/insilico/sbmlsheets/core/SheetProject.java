@@ -3,8 +3,11 @@ package org.insilico.sbmlsheets.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.plaf.synth.SynthSpinnerUI;
+
+import org.insilico.sbmlsheets.core.compile.SBMLCompiler;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -22,16 +25,19 @@ public class SheetProject{
 	private String uri;
 
 	private String sbmlSpecification = "http://www.sbml.org/sbml/level3/version2/core";
+
+	private ObservableMap<String, String> types;
 	
 	public SheetProject(String uri) {
 		this.setUri(uri);
 		paths = FXCollections.observableArrayList();
 		names = FXCollections.observableHashMap();
+		types = FXCollections.observableHashMap();
 		
 	}
 
 
-	public SheetProject(String uri, String name, String specification, List<String> paths, List<String> names) {
+	public SheetProject(String uri, String name, String specification, List<String> paths, List<String> names, List<String> types) {
 		this.uri = uri;
 		this.sbmlFileName = name;
 		this.sbmlSpecification = specification;
@@ -40,9 +46,16 @@ public class SheetProject{
 		}
 		this.paths = FXCollections.observableArrayList(paths);
 		this.names = FXCollections.observableHashMap();
+		this.types = FXCollections.observableHashMap();
 		for (int i=0;i<paths.size();i++) {
 			this.addNameToPath(paths.get(i), names.get(i));
+			this.addTypeToPath(paths.get(i), types.get(i));
 		}
+	}
+
+
+	private void addTypeToPath(String path, String type) {
+		this.types.put(path, type);
 	}
 
 
@@ -65,6 +78,7 @@ public class SheetProject{
 
 	public void compileSBML() {
 		save();
+		SBMLCompiler compiler = new SBMLCompiler(paths, types);
 	}
 	
 	public void save() {
@@ -78,7 +92,7 @@ public class SheetProject{
 		out += String.format("SPECIFICATION=%s\n", sbmlSpecification);
 		out += "SHEETS={\n";
 		for (String path : paths) {
-			out += String.format("%s:%s\n", path,names.get(path));
+			out += String.format("%s:%s:%s\n", path,names.get(path),types.get(path));
 		}
 		out += "}\n";
 		return out;
@@ -90,7 +104,9 @@ public class SheetProject{
 	}
 	
 	public void removePath(String path) {
-		paths.remove(path);
+		if(paths.contains(path)) {
+			paths.remove(path);
+		}
 	}
 	
 	public void addPath(String path) {
@@ -150,9 +166,31 @@ public class SheetProject{
 
 
 	public void addPathNameType(String path, String name, String type) {
-		if (!paths.contains(name) && !names.containsValue(name)) {
+		if (!paths.contains(name) && !names.containsValue(name) && !types.containsValue(type)) {
 			addPath(path);
 			addNameToPath(path, name);
+			addTypeToPath(path,type);
+		}
+	}
+
+
+	public void removeAssociated(String path) {
+		removePath(path);
+		removeName(path);
+		removeType(path);
+	}
+
+
+	private void removeType(String path) {
+		if (types.containsKey(path)) {
+			types.remove(path);
+		}
+	}
+
+
+	private void removeName(String path) {
+		if (names.containsKey(path)) {
+			names.remove(path);
 		}
 	}
 

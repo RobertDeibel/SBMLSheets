@@ -56,9 +56,16 @@ public class SheetProjectView {
 	@Inject
 	SheetProject project;
 	
+	/**
+	 * The {@link MWindow} is a Model Window of the Insilico application. It is injected at instantiation and available
+	 * inside the object.
+	 */
 	@Inject 
 	MTrimmedWindow mWindow;
 	
+	/**
+	 * The paths of all csv files in this directory. Needed for the drop-down menus.
+	 */
 	ObservableList<String> pathsInDir;
 	
 	private final int PREF_WIDTH = 400;
@@ -461,6 +468,7 @@ public class SheetProjectView {
 			
 			@Override
 			public void handle(ActionEvent event) {
+				project.removeAssociated(fileSelection.getValue());
 				fileSelection.setValue(null);
 				sheetName.clear();
 				tableSelection.setValue(null);
@@ -566,6 +574,13 @@ public class SheetProjectView {
 	 */
 	private void deleteLine(VBox spreadsheetListing, HBox sheetLine) {
 		spreadsheetListing.getChildren().remove(sheetLine);
+		for (Node node : sheetLine.getChildrenUnmodifiable()){
+			if (node.getId().equals("fileSelection")) {
+				String path = ((ComboBox<String>) node).getValue();
+				project.removeAssociated(path);
+			}
+		}
+		
 	}
 	
 	/**

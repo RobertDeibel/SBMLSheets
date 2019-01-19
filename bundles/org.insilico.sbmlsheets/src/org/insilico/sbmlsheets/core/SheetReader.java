@@ -119,6 +119,7 @@ public class SheetReader {
 		try (Scanner s = new Scanner(new FileReader(uri))){
 			List<String> paths = new ArrayList<String>();
 			List<String> names = new ArrayList<String>();
+			List<String> types = new ArrayList<String>();
 			if(!s.hasNextLine()) {
 				return new SheetProject(uri);
 			}
@@ -128,18 +129,19 @@ public class SheetReader {
 				if(!line[0].equals("SHEETS")) {
 					args.add(line[1]);
 				} else {
-					String namePathPair = s.nextLine();
+					String namePathPairType = s.nextLine();
 					
-					while (!namePathPair.equals("}")) {
-						paths.add(namePathPair.split(":")[0]);
-						names.add(namePathPair.split(":")[1]);
-						namePathPair = s.nextLine();
+					while (!namePathPairType.equals("}")) {
+						paths.add(namePathPairType.split(":")[0]);
+						names.add(namePathPairType.split(":")[1]);
+						types.add(namePathPairType.split(":")[2]);
+						namePathPairType = s.nextLine();
 					}
 				}
 				
 			}
 			s.close();
-			return new SheetProject(uri, args.get(0), args.get(1), paths, names);
+			return new SheetProject(uri, args.get(0), args.get(1), paths, names, types);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
