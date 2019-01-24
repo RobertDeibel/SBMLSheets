@@ -11,6 +11,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.insilico.sbmlsheets.core.Constants;
 import org.insilico.sbmlsheets.core.SheetProject;
 import org.insilico.sbmlsheets.core.SheetWriter;
+import org.insilico.sbmlsheets.core.compile.SBMLBuilder;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -281,8 +282,7 @@ public class SheetProjectView {
 	}
 	
 	/**
-	 * Opens a {@link FileChooser} to enable the user to choose an SBML file to generate csv files an the content of .sheets
-	 * @param parent The {@link BorderPane} {@link Node} provided by Insilico
+	 * Opens a {@link FileChooser} to enable the user to choose an SBML file to generate csv files and the content of .sheets
 	 */
 	private void choseSBMLfile() {
 		final FileChooser fileChooser = new FileChooser();
@@ -293,6 +293,7 @@ public class SheetProjectView {
 			File file = fileChooser.showOpenDialog(window);
 			if (!file.equals(null)) {
 				System.out.println("Yeah SBML Laden Yeah");
+				project.loadSBML(file);
 			}
 		} catch (NullPointerException e) {
 			System.err.println("No File selected");

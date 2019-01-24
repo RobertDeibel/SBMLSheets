@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.swing.plaf.synth.SynthSpinnerUI;
 
-import org.insilico.sbmlsheets.core.compile.SBMLCompiler;
+import org.insilico.sbmlsheets.core.compile.SBMLBuilder;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -22,9 +22,15 @@ public class SheetProject{
 	
 	private String sbmlFileName;
 	
+	private String modelName;
+	
 	private String uri;
 
 	private String sbmlSpecification = "http://www.sbml.org/sbml/level3/version2/core";
+	
+	private int level;
+	
+	private int version;
 
 	private ObservableMap<String, String> types;
 	
@@ -78,7 +84,8 @@ public class SheetProject{
 
 	public void compileSBML() {
 		save();
-		SBMLCompiler compiler = new SBMLCompiler(paths, types);
+		SBMLBuilder compiler = new SBMLBuilder(this);
+		compiler.compile();
 	}
 	
 	public void save() {
@@ -192,6 +199,17 @@ public class SheetProject{
 		if (names.containsKey(path)) {
 			names.remove(path);
 		}
+	}
+
+
+	public void loadSBML(File file) {
+		SBMLBuilder builder = new SBMLBuilder(this);
+		builder.read(file);
+	}
+
+
+	public ObservableMap<String, String> getTypes() {
+		return this.types;
 	}
 
 }

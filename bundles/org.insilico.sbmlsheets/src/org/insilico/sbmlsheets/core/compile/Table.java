@@ -1,14 +1,18 @@
 package org.insilico.sbmlsheets.core.compile;
 
+import org.insilico.sbmlsheets.core.Spreadsheet;
+
 public abstract class Table {
 	
-	String uri;
+	protected final String uri;
+		
 	
 	public Table(String path) {
 		this.uri = path;
-		buildModel(path);
 	}
 
-	protected abstract void buildModel(String path);
+	protected abstract Spreadsheet buildSpreadsheet();
+	
+
 	
 }

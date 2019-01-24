@@ -1,5 +1,8 @@
 package org.insilico.sbmlsheets.core;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -17,7 +20,32 @@ import javafx.collections.FXCollections;
  */
 public class HeadRow extends Row {
 	
+	private static final List<String> GEN_DEF_HEAD_VALUE = Arrays.asList("ID", "Name");
+	
+	private static final List<String> COMPARTMENT_HEAD_VALUE = Arrays.asList("Location", "IsConstant",
+															"SBOTerm", "InitialConcentration", "hasOnlySubstanceUnits");
+	
+	private static final List<String> CONSTRAINTS_HEAD_VALUE = Arrays.asList();
+	
+	private static final List<String> EVENTS_HEAD_VALUE = Arrays.asList("Assignments", "Trigger", "SBOterm", "Delay", "UseValuesFromTriggerTime");
+	
+	private static final List<String> FUNCTION_DEF_HEAD_VALUE = null;
+
+	private static final List<String> INIT_ASSIGNMENTS_HEAD_VALUE = null;
+
+	private static final List<String> PARAMETER_HEAD_VALUE = null;
+
+	private static final List<String> REACTIONS_HEAD_VALUE = Arrays.asList("ReactionFormula", "Location",
+															"Regulator", "KineticLaw", "SBOTerm", "IsReversible");
+
+	private static final List<String> RULES_HEAD_VALUE = Arrays.asList("Formula", "Unit");
+
+	private static final List<String> SPECIES_HEAD_VALUE = null;
+
+	private static final List<String> UNIT_DEF_HEAD_VALUE = null;
+	
 	private static final String INIT_CELL_VALUE = "Hier koennte Ihre Werbung stehen";
+
 	/**
 	 * Private constructor {@link HeadRow} object without parameters.
 	 * Only to be used for creation of a empty {@link HeadRow} through {@link #createHead()}.
@@ -44,12 +72,59 @@ public class HeadRow extends Row {
 	}
 	/**
 	 * Method for calling the parameterless private constructor {@link #HeadRow()} of {@link HeadRow}.
+	 * @param tableType The default type of the {@link Spreadsheet}.
 	 * @return A {@link HeadRow} object representing an empty header of a {@link Spreadsheet}.
 	 */
-	static HeadRow createHead() {
-		return new HeadRow();
+	static HeadRow createHead(String tableType) {
+		List<String> head = new ArrayList<>();
+		head.addAll(GEN_DEF_HEAD_VALUE);
+		head.addAll(getTableColsFor(tableType));
+		
+		return new HeadRow(head);
 	}
 	
+	/**
+	 * Returns a List of the Columns for a specific Table type
+	 * @param tableType The type of the table
+	 * @return A List of the Columns for a specific Table type
+	 */
+	private static List<String> getTableColsFor(String tableType) {
+		List<String> cols = new ArrayList<>();
+		switch (tableType) {
+		case Constants.COMPARTMENT_TABLE:
+			cols.addAll(COMPARTMENT_HEAD_VALUE);
+			break;
+		case Constants.CONSTRAINTS_TABLE:
+			cols.addAll(CONSTRAINTS_HEAD_VALUE);
+			break;
+		case Constants.EVENTS_TABLE:
+			cols.addAll(EVENTS_HEAD_VALUE);
+			break;
+		case Constants.FUNCTION_DEF_TABLE:
+			cols.addAll(FUNCTION_DEF_HEAD_VALUE);
+			break;
+		case Constants.INIT_ASSIGNMENTS_TABLE:
+			cols.addAll(INIT_ASSIGNMENTS_HEAD_VALUE);
+			break;
+		case Constants.PARAMETERS_TABLE:
+			cols.addAll(PARAMETER_HEAD_VALUE);
+			break;
+		case Constants.REACTIONS_TABLE:
+			cols.addAll(REACTIONS_HEAD_VALUE);
+			break;
+		case Constants.RULES_TABLE:
+			cols.addAll(RULES_HEAD_VALUE);
+			break;
+		case Constants.SPECIES_TABLE:
+			cols.addAll(SPECIES_HEAD_VALUE);
+			break;
+		case Constants.UNIT_DEF_TABLE:
+			cols.addAll(UNIT_DEF_HEAD_VALUE);
+		default:
+			break;
+		}
+		return cols;
+	}
 	/**
 	 * Method for calling the one-parameter private constructor {@link #HeadRow(List)} of {@link HeadRow}.
 	 * @param head The value and name of the header cells as a {@link List}

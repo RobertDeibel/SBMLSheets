@@ -4,13 +4,14 @@ import javax.swing.tree.TreeNode;
 
 import org.insilico.sbmlsheets.core.Spreadsheet;
 
-public class FunctionDefTable extends Table {
+public class EventTable extends Table {
 
-	public FunctionDefTable(String path) {
+	public EventTable(String path) {
 		super(path);
 	}
 
-	public FunctionDefTable(TreeNode treeNode, String path) {
+	public EventTable(TreeNode treeNode, String path) {
+		// TODO Auto-generated constructor stub
 		super(path);
 	}
 

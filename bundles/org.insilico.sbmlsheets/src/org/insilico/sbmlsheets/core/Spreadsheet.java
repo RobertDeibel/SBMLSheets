@@ -51,13 +51,14 @@ public class Spreadsheet {
 	 * @param uri The location of the representing CSV
 	 */
 	public Spreadsheet(String uri) {
-		head = HeadRow.createHead();
+		tableType = Constants.REACTIONS_TABLE;
+		tableName = "defaultTable";
+		head = HeadRow.createHead(tableType);
 		data = FXCollections.observableArrayList();
+
 		for (int i=0; i<INITAIAL_ROWS;i++) {
 			addEmptyRow();
 		}
-		tableType = "";
-		tableName = "";
 		this.fileLocation = uri;
 	}
 	
