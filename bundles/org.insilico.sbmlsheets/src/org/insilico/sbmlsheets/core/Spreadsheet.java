@@ -49,10 +49,11 @@ public class Spreadsheet {
 	/**
 	 * Constructor for an empty {@link Spreadsheet}
 	 * @param uri The location of the representing CSV
+	 * @param tableType
 	 */
-	public Spreadsheet(String uri) {
-		tableType = Constants.REACTIONS_TABLE;
-		tableName = "defaultTable";
+	public Spreadsheet(String uri, String tableType, String tableName) {
+		this.tableType = tableType;
+		this.tableName = tableName;
 		head = HeadRow.createHead(tableType);
 		data = FXCollections.observableArrayList();
 
@@ -63,14 +64,12 @@ public class Spreadsheet {
 	}
 	
 	/**
-	 * Constructor for a pre-filled {@link Spreadsheet}
+	 * Constructor for a pre-filled {@link Spreadsheet} with specified columns.
 	 * @param data The contents of the {@link Spreadsheet}
-	 * @param tableType The type of table 
 	 * @param tableName The Name of the Table
 	 * @param uri The location of the representing CSV
 	 */
-	@Inject
-	public Spreadsheet(List<List<String>> data, String tableType, String tableName, String uri) {
+	public Spreadsheet( String uri, String tableType, String tableName, List<List<String>> data) {
 		this.head = HeadRow.createHead(data.remove(0));
 		this.data = FXCollections.observableArrayList(convert(data));
 		fillTable();
@@ -78,7 +77,7 @@ public class Spreadsheet {
 		this.tableName = tableName;
 		this.fileLocation = uri;
 	}
-	
+		
 	/**
 	 * Converts given data of a pre-filled table into a {@link Spreadsheet} representation. 
 	 * Called by the constructor {@link #Spreadsheet(List, String, String, String)}.

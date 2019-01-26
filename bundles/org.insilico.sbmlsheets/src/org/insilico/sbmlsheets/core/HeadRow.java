@@ -22,8 +22,8 @@ public class HeadRow extends Row {
 	
 	private static final List<String> GEN_DEF_HEAD_VALUE = Arrays.asList("ID", "Name");
 	
-	private static final List<String> COMPARTMENT_HEAD_VALUE = Arrays.asList("Location", "IsConstant",
-															"SBOTerm", "InitialConcentration", "hasOnlySubstanceUnits");
+	private static final List<String> COMPARTMENT_HEAD_VALUE = Arrays.asList("Size", "Unit", "IsConstant",
+															"SBOTerm");
 	
 	private static final List<String> CONSTRAINTS_HEAD_VALUE = Arrays.asList();
 	

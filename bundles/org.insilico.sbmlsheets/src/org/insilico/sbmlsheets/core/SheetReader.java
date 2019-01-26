@@ -1,5 +1,7 @@
 package org.insilico.sbmlsheets.core;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,9 +16,10 @@ public class SheetReader {
 	
 	public static Spreadsheet readSheetFromFile(String uri) {
 		
+		
 		try (Scanner s = new Scanner(new FileReader(uri))){
 			if(!s.hasNextLine()) {
-				return new Spreadsheet(uri);
+				return new Spreadsheet(uri, SheetReader.readTableType(uri), SheetReader.readTableName(uri));
 			}
 			List<List<String>> data = new ArrayList<>();
 			while (s.hasNextLine()) {
@@ -24,7 +27,7 @@ public class SheetReader {
 				data.add(line);
 			}
 			s.close();
-			return new Spreadsheet(data, "", "", uri);
+			return new Spreadsheet(uri, "", "", data);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -35,7 +38,7 @@ public class SheetReader {
 //			e.printStackTrace();
 		}
 		
-		return new Spreadsheet(uri);
+		return new Spreadsheet(uri, SheetReader.readTableType(uri), SheetReader.readTableName(uri));
 	}
 	
 	private static List<String> parseLine(String nextLine) {
@@ -46,7 +49,7 @@ public class SheetReader {
 	private static List<String> parseLine(String nextLine, char separator, char quote) {
 		List<String> result = new ArrayList<String>();
 		
-		if (nextLine==null && nextLine.isEmpty()) {
+		if (nextLine==null || nextLine.isEmpty()) {
 			return result;
 		}
 		
@@ -153,6 +156,42 @@ public class SheetReader {
 		}
 		
 		return new SheetProject(uri);
+	}
+
+	/**
+	 * Returns the type of the {@link Spreadsheet} when called with the corresponding path to the csv.
+	 * @param uri The path to a csv file represented by a {@link Spreadsheet}.
+	 * @return The type of the {@link Spreadsheet}
+	 */
+	private static String readTableType(String uri) {
+		String tableType = "";
+		String pathToSheets = uri.replace(uri.split(File.separator)[uri.split(File.separator).length - 1], ".sheets");
+		try (Scanner s = new Scanner(new FileReader(pathToSheets))){
+			final SheetProject sp = SheetReader.readProjectFromFile(pathToSheets);
+			tableType = sp.getType(uri);
+		} catch (FileNotFoundException e) {
+			System.err.println("No .sheets file found for table type reference.");
+			e.printStackTrace();
+		}
+		return tableType;
+	}
+	
+	/**
+	 * Returns the name of the {@link Spreadsheet} when called with the corresponding path to the csv.
+	 * @param uri The path to a csv file represented by a {@link Spreadsheet}.
+	 * @return The name of the {@link Spreadsheet}
+	 */
+	private static String readTableName(String uri) {
+		String tableName = "";
+		String pathToSheets = uri.replace(uri.split(File.separator)[uri.split(File.separator).length - 1], ".sheets");
+		try (Scanner s = new Scanner(new FileReader(pathToSheets))){
+			final SheetProject sp = SheetReader.readProjectFromFile(pathToSheets);
+			tableName = sp.getName(uri);
+		} catch (FileNotFoundException e) {
+			System.err.println("No .sheets file found for table name reference.");
+			e.printStackTrace();
+		}
+		return tableName;
 	}
 
 

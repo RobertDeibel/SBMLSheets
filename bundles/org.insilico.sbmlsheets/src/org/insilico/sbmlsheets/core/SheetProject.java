@@ -171,16 +171,19 @@ public class SheetProject{
 		this.sbmlFileName = sbmlFileName;
 	}
 
-
+	
 	public void addPathNameType(String path, String name, String type) {
-		if (!paths.contains(name) && !names.containsValue(name) && !types.containsValue(type)) {
+		if (!paths.contains(path) && !names.containsValue(name) && !types.containsValue(type)) {
 			addPath(path);
 			addNameToPath(path, name);
 			addTypeToPath(path,type);
 		}
 	}
 
-
+	/**
+	 * Removes the entry for {@code path} from {@link #paths} and the map from {@link #names} and {@link #types} if they exist
+	 * @param path The key to look for.
+	 */
 	public void removeAssociated(String path) {
 		removePath(path);
 		removeName(path);
@@ -188,28 +191,53 @@ public class SheetProject{
 	}
 
 
+	/**
+	 * Removes the map for {@code path} in {@link #types} if it exists.
+	 * @param path The key to look for.
+	 */
 	private void removeType(String path) {
 		if (types.containsKey(path)) {
 			types.remove(path);
 		}
 	}
 
-
+	/**
+	 * Removes the map for {@code path} in {@link #names} if it exists.
+	 * @param path The key to look for.
+	 */
 	private void removeName(String path) {
 		if (names.containsKey(path)) {
 			names.remove(path);
 		}
 	}
 
-
+	/**
+	 * Loads an existing SBML file and creates csv files and updates the .sheets file.
+	 * @param file The selected SBML file.
+	 */
 	public void loadSBML(File file) {
 		SBMLBuilder builder = new SBMLBuilder(this);
 		builder.read(file);
 	}
 
-
+	/**
+	 * Returns the {@link ObservableMap} of {@link #types}.
+	 * @return The {@link ObservableMap} of {@link #types}.
+	 */
 	public ObservableMap<String, String> getTypes() {
 		return this.types;
+	}
+
+	/**
+	 * Returns the mapping of {@code path} in {@link #types}.
+	 * @param path The path to a csv file of a {@link Spreadsheet}
+	 * @return The mapping of {@code path} in {@link #types}.
+	 */
+	public String getType(String path) {
+		if (types.containsKey(path)) {
+			return types.get(path);
+		}
+		return "";
 	}
 
 }

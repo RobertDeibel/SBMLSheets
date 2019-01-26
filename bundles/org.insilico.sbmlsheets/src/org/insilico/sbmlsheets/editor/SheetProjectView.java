@@ -306,7 +306,7 @@ public class SheetProjectView {
 	 * @param fileChooser A fileChooser; typically for the SBML file selection.
 	 */
 	private void configureFileChooser(FileChooser fileChooser) {
-		  fileChooser.setTitle("View Pictures");
+		  fileChooser.setTitle("Choose SBML File");
 	      fileChooser.setInitialDirectory(
 	            new File(System.getProperty("user.home"))
 	    		  );
