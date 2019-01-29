@@ -311,16 +311,12 @@ public class SheetProjectView {
 			if (!file.equals(null)) {
 				System.out.println("Yeah SBML Laden Yeah");
 				project.loadSBML(file);
-				updateView();
 			}
 		} catch (NullPointerException e) {
 			System.err.println("No File selected");
 		}
 	}
 	
-	private void updateView() {
-		
-	}
 
 	/**
 	 * Configures the {@link FileChooser} given as parameter; sets Title
@@ -383,7 +379,6 @@ public class SheetProjectView {
 					//check if has fileSelection ID 
 					if (field.getId() != null && field.getId().equals("fileSelection")) {
 						ObservableList<String> temp = FXCollections.observableArrayList(list);
-						temp.removeAll(project.getPaths());
 						ObservableList<String> fileNames = getFileNames(temp);
 						//since ID is "fileSelection" field is a ComboBox
 						((ComboBox<String>) field).setItems(fileNames);
