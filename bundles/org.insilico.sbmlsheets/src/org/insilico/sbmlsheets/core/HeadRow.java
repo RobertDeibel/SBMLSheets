@@ -22,8 +22,7 @@ public class HeadRow extends Row {
 	
 	private static final List<String> GEN_DEF_HEAD_VALUE = Arrays.asList("ID", "Name");
 	
-	private static final List<String> COMPARTMENT_HEAD_VALUE = Arrays.asList("Size", "Unit", "IsConstant",
-															"SBOTerm");
+	private static final List<String> COMPARTMENT_HEAD_VALUE = Arrays.asList("Size", "Unit", "SBOTerm");
 	
 	private static final List<String> CONSTRAINTS_HEAD_VALUE = Arrays.asList();
 	
@@ -33,16 +32,15 @@ public class HeadRow extends Row {
 
 	private static final List<String> INIT_ASSIGNMENTS_HEAD_VALUE = null;
 
-	private static final List<String> PARAMETER_HEAD_VALUE = null;
+	private static final List<String> PARAMETER_HEAD_VALUE = Arrays.asList("Value", "Unit", "Type", "SBOTerm");
 
-	private static final List<String> REACTIONS_HEAD_VALUE = Arrays.asList("ReactionFormula", "Location",
-															"Regulator", "KineticLaw", "SBOTerm", "IsReversible");
+	private static final List<String> REACTIONS_HEAD_VALUE = Arrays.asList("ReactionFormula", "Location", "Regulator", "KineticLaw", "SBOTerm", "IsReversible");
 
 	private static final List<String> RULES_HEAD_VALUE = Arrays.asList("Formula", "Unit");
 
-	private static final List<String> SPECIES_HEAD_VALUE = null;
+	private static final List<String> SPECIES_HEAD_VALUE = Arrays.asList("Compartment", "IsConstant", "SBOTerm", "InitialConcentration", "hasOnlySubstanceUnits");
 
-	private static final List<String> UNIT_DEF_HEAD_VALUE = null;
+	private static final List<String> UNIT_DEF_HEAD_VALUE = Arrays.asList("Kind", "Exponent", "Multiplier", "Scale");
 	
 	private static final String INIT_CELL_VALUE = "Hier koennte Ihre Werbung stehen";
 

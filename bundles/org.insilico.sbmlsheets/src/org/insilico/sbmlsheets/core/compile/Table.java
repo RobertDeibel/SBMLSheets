@@ -1,5 +1,7 @@
 package org.insilico.sbmlsheets.core.compile;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.tree.TreeNode;
@@ -23,12 +25,17 @@ public abstract class Table {
 	}
 
 	private void initName() {
-		this.tableName = this.uri.replaceAll(".csv", "");
+		String name = uri.split(File.separator)[uri.split(File.separator).length - 1].replace(".csv", "");
+		this.tableName = name;
 	}
 
-	public Table(TreeNode node, String path) {
+	public Table(String path, TreeNode node) {
 		this(path);
 		getSectionsFrom(node);
+	}
+	
+	protected void addRow(List<String> row, List<List<String>> data) {
+		data.add(row);
 	}
 	
 	protected abstract String initTableType();

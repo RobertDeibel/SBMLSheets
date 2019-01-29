@@ -21,11 +21,12 @@ public final class TableFactory {
 	 */
 	private TableFactory() {}
 	
-	public static Table getTableFrom(TreeNode treeNode) {
+	public static Table getTableFrom(TreeNode treeNode, String path) {
 		TreeNode firstElem = treeNode.getChildAt(0);
 		
 		if (firstElem instanceof Compartment) {
-			return new CompartmentTable(treeNode, CompartmentTable.class.getSimpleName()+".csv");
+			path += CompartmentTable.class.getSimpleName()+".csv";
+			return new CompartmentTable(path, treeNode);
 		}
 		if (firstElem instanceof Constraint) {
 			return new ConstraintsTable(treeNode, ConstraintsTable.class.getSimpleName()+".csv");
@@ -40,62 +41,27 @@ public final class TableFactory {
 			return new InitAssignmentsTable(treeNode, InitAssignmentsTable.class.getSimpleName()+".csv");
 		}
 		if (firstElem instanceof Parameter) {
-			return new ParametersTable(treeNode, ParametersTable.class.getSimpleName()+".csv");
+			path += ParametersTable.class.getSimpleName()+".csv";
+			return new ParametersTable(path, treeNode);
 		}
 		if (firstElem instanceof Reaction) {
-			return new ReactionsTable(treeNode, ReactionsTable.class.getSimpleName()+".csv");
+			path += ReactionsTable.class.getSimpleName()+".csv";
+			return new ReactionsTable(path, treeNode);
 		}
 		if (firstElem instanceof Rule) {
 			return new RulesTable(treeNode, RulesTable.class.getSimpleName()+".csv");
 		}
 		if (firstElem instanceof Species) {
-			return new SpeciesTable(treeNode, SpeciesTable.class.getSimpleName()+".csv");
+			path += SpeciesTable.class.getSimpleName()+".csv";
+			return new SpeciesTable(path, treeNode);
 		}
 		if (firstElem instanceof UnitDefinition) {
-			return new UnitDefTable(treeNode, UnitDefTable.class.getSimpleName()+".csv");
+			path += UnitDefTable.class.getSimpleName()+".csv";
+			return new UnitDefTable(path, treeNode);
 		}
 		return null;
 		
 	}
 
-	private static Table tableFromIdentifier(String identifier) {
-		Table object = null;
-		switch (identifier) {
-		case Constants.COMPARTMENT_ID:
-			object = new CompartmentTable(CompartmentTable.class.getSimpleName()+".csv");
-			break;
-		case Constants.CONSTRAINTS_ID:
-			object = new ConstraintsTable(ConstraintsTable.class.getSimpleName()+".csv");
-			break;
-		case Constants.EVENTS_ID:
-			object = new EventTable(EventTable.class.getSimpleName()+".csv");
-			break;
-		case Constants.FUNCTION_DEF_ID:
-			object = new FunctionDefTable(FunctionDefTable.class.getSimpleName()+".csv");
-			break;
-		case Constants.INIT_ASSIGNMENTS_ID:
-			object = new InitAssignmentsTable(InitAssignmentsTable.class.getSimpleName()+".csv");
-			break;
-		case Constants.PARAMETERS_ID:
-			object = new ParametersTable(ParametersTable.class.getSimpleName()+".csv");
-			break;
-		case Constants.REACTIONS_ID:
-			object = new ReactionsTable(ReactionsTable.class.getSimpleName()+".csv");
-			break;
-		case Constants.RULES_ID:
-			object = new RulesTable(RulesTable.class.getSimpleName()+".csv");
-			break;
-		case Constants.SPECIES_ID:
-			object = new SpeciesTable(SpeciesTable.class.getSimpleName()+".csv");
-			break;
-		case Constants.UNIT_DEF_ID:
-			object = new UnitDefTable(UnitDefTable.class.getSimpleName()+".csv");
-			break;
-		default:
-			System.err.println("Oh No! The specified table is not available!");
-			break;
-		}
-		return object;
-	}
 
 }

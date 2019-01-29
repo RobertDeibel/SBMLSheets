@@ -17,7 +17,7 @@ public class Row implements Iterable<StringProperty>{
 	/**
 	 * The value of an empty String property in a {@link Row}.
 	 */
-	protected static final String INIT_CELL_VALUE = "bla";
+	protected static final String INIT_CELL_VALUE = "";
 
 	/**
 	 * The initial number of initiated cells in a {@link Row}. 
@@ -209,6 +209,17 @@ public class Row implements Iterable<StringProperty>{
 			cellsAsArray[i] = this.getCell(i);
 		}
 		return String.join(",", cellsAsArray);
+	}
+
+
+
+	public boolean isEmpty() {
+		for (StringProperty value : this.cells) {
+			if (!value.equals(INIT_CELL_VALUE)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 }

@@ -2,6 +2,7 @@ package org.insilico.sbmlsheets.editor;
 
 
 import java.io.File;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -91,52 +92,6 @@ public class SheetProjectView {
 		
 		pathsInDir = FXCollections.observableArrayList(project.readFilesInDir(new File(project.getUri().replace(".sheets", ""))));
 		
-		//creating a ButtonBar
-		ButtonBar bottomButtonBar = new ButtonBar();
-		//placing ButtonBar at bottom of screen
-		parent.setBottom(bottomButtonBar);
-		//Button for compilation of an SBML project
-		Button compileButton = new Button("_Compile");
-		//enable fireing of button through Alt+C
-		compileButton.setMnemonicParsing(true);
-		compileButton.setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				System.out.print("Compiling...");
-				project.compileSBML();
-				System.out.println("Done");
-			}
-		});
-		//Button for saving the SheetsProject file to .sheets
-		Button saveButton = new Button("_Save");
-		saveButton.setMnemonicParsing(true);
-		saveButton.setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				System.out.print("Saving...");
-				project.save();
-				System.out.println("Done");
-			}
-		});
-		//Button for reading an SBML file and loading the Sheets/csv files accordingly
-		Button addSBMLButton = new Button("_Read from SBML");
-		addSBMLButton.setMnemonicParsing(true);
-		addSBMLButton.setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				System.out.print("Reading SBML file...");
-				choseSBMLfile();
-				System.out.println("Done");
-			}
-			
-			
-
-		});
-		bottomButtonBar.getButtons().addAll(addSBMLButton, saveButton, compileButton);
-		
 		//main area is a gridpane
 		GridPane gp = new GridPane();
 				
@@ -213,20 +168,7 @@ public class SheetProjectView {
 		gp.add(sbmlFileNameText, 0, 1);
 		gp.add(sbmlFileNameControls, 1, 1);
 		//VBox for all spreadsheets
-		VBox spreadsheetListing = new VBox();
-		//check if there are any Spreadsheets in project
-		if (project.getPaths().isEmpty()) {
-			//add one empty line if not 
-			spreadsheetListing.getChildren().add(spreadsheetLine());
-		} else {
-			//for every defined Spreadsheet add one line, the first without a deleteButton
-			boolean toggle = false;		//flag for the deleteButton; first line is without, others are with
-			for (String path : project.getPaths()) {
-				path = path.split(File.separator)[path.split(File.separator).length - 1];
-				spreadsheetListing.getChildren().add(spreadsheetLine(toggle, spreadsheetListing, path, project.getName(path)));
-				toggle = true;		//toggle flag
-			}
-		}
+		VBox spreadsheetListing = initSpreadsheetListing();
 		//include the listing in a ScrollPane to enable scrolling if the listing is to large
 		ScrollPane sp = new ScrollPane(spreadsheetListing);
 		sp.setPrefHeight(PREF_HEIGHT_SCROLL);
@@ -276,11 +218,86 @@ public class SheetProjectView {
 		gp.add(spreadsheetControls, 0, 2);
 		gp.add(sp, 1, 2);
 		
+		//creating a ButtonBar
+		ButtonBar bottomButtonBar = new ButtonBar();
+		//placing ButtonBar at bottom of screen
+		parent.setBottom(bottomButtonBar);
+		//Button for compilation of an SBML project
+		Button compileButton = new Button("_Compile");
+		//enable firing of button through Alt+C
+		compileButton.setMnemonicParsing(true);
+		compileButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.print("Compiling...");
+				project.compileSBML();
+				System.out.println("Done");
+			}
+		});
+		//Button for saving the SheetsProject file to .sheets
+		Button saveButton = new Button("_Save");
+		saveButton.setMnemonicParsing(true);
+		saveButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.print("Saving...");
+				project.save();
+				System.out.println("Done");
+			}
+		});
+		//Button for reading an SBML file and loading the Sheets/csv files accordingly
+		Button addSBMLButton = new Button("_Read from SBML");
+		addSBMLButton.setMnemonicParsing(true);
+		addSBMLButton.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.print("Reading SBML file...");
+				choseSBMLfile();
+				sbmlSpecification.setText(project.getSpecification());
+				sbmlFileName.setText(project.getSbmlFileName());
+				spreadsheetListing.getChildren().clear();
+				final VBox tempSpreadsheetListing = initSpreadsheetListing();
+				final List<Node> listing = tempSpreadsheetListing.getChildren();
+				for (int i=0; i<listing.size(); i=i) {
+					Node child = listing.get(i);
+					spreadsheetListing.getChildren().add(child);
+				}
+				System.out.println("Done");
+			}
+			
+		});
+		
+		bottomButtonBar.getButtons().addAll(addSBMLButton, saveButton, compileButton);
+
+
 		//View Done
 		return parent;
 		
 	}
 	
+	private VBox initSpreadsheetListing() {
+		VBox spreadsheetListing = new VBox();
+		//check if there are any Spreadsheets in project
+		if (project.getPaths().isEmpty()) {
+			//add one empty line if not 
+			spreadsheetListing.getChildren().add(spreadsheetLine());
+		} else {
+			//for every defined Spreadsheet add one line, the first without a deleteButton
+			boolean toggle = false;		//flag for the deleteButton; first line is without, others are with
+			for (String path : project.getPaths()) {
+				String name = project.getName(path);
+				String type = project.getType(path);
+				String shortPath = path.split(File.separator)[path.split(File.separator).length - 1];				
+				spreadsheetListing.getChildren().add(spreadsheetLine(toggle, spreadsheetListing, shortPath, name, type));
+				toggle = true;		//toggle flag
+			}
+		}
+		return spreadsheetListing;
+	}
+
 	/**
 	 * Opens a {@link FileChooser} to enable the user to choose an SBML file to generate csv files and the content of .sheets
 	 */
@@ -294,12 +311,17 @@ public class SheetProjectView {
 			if (!file.equals(null)) {
 				System.out.println("Yeah SBML Laden Yeah");
 				project.loadSBML(file);
+				updateView();
 			}
 		} catch (NullPointerException e) {
 			System.err.println("No File selected");
 		}
 	}
 	
+	private void updateView() {
+		
+	}
+
 	/**
 	 * Configures the {@link FileChooser} given as parameter; sets Title
 	 * sets initial Directory as home; sets Extension filters
@@ -325,15 +347,20 @@ public class SheetProjectView {
 	 * created by {@link #spreadsheetLine()}, {@link #spreadsheetLine(boolean, VBox)} or {@link #spreadsheetLine(boolean, VBox, String, String)}.
 	 * @param path The path to be initially set in the {@link ComboBox}.
 	 * @param name The name to be initially set in the {@link TextField}.
+	 * @param string 
 	 * @return A pre-filled {@link HBox} filled during instantiation.
 	 */
-	private HBox spreadsheetLine(boolean deleteButton, VBox spreadsheetListing, String path, String name) {
+	private HBox spreadsheetLine(boolean deleteButton, VBox spreadsheetListing, String path, String name, String type) {
 		HBox spreadsheetLine = spreadsheetLine(deleteButton, spreadsheetListing);
 		for (Node child : spreadsheetLine.getChildren()) {
-			if (child.getId().equals("fileSelection")) {
-				((ComboBox<String>) child).setValue(path);
-			} else if (child instanceof TextField) {
-				((TextField) child).setText(name);
+			if (child.getId() != null) {
+				if (child.getId().equals("fileSelection")) {
+					((ComboBox<String>) child).setValue(path);
+				} else if (child.getId().equals("sheetName")) {
+					((TextField) child).setText(name);
+				} else if (child.getId().equals("tableSelection")) {
+					((ComboBox<String>) child).setValue(type);
+				}
 			}
 		}
 		
@@ -354,7 +381,7 @@ public class SheetProjectView {
 				//for the fields in the HBox
 				for (Node field : ((HBox) n).getChildren()) {
 					//check if has fileSelection ID 
-					if (field.getId().equals("fileSelection")) {
+					if (field.getId() != null && field.getId().equals("fileSelection")) {
 						ObservableList<String> temp = FXCollections.observableArrayList(list);
 						temp.removeAll(project.getPaths());
 						ObservableList<String> fileNames = getFileNames(temp);
@@ -667,7 +694,18 @@ public class SheetProjectView {
 		}
 	}
 	
-
+	private class ChoseSBMLEventHandler implements EventHandler<ActionEvent> {
+		
+		@Override
+		public void handle(ActionEvent event) {
+			System.out.print("Reading SBML file...");
+			choseSBMLfile();
+			System.out.println("Done");
+		}
+		
+	}
 	
+
+
 
 }

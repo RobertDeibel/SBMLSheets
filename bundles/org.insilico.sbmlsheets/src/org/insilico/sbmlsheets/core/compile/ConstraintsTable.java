@@ -22,4 +22,16 @@ public class ConstraintsTable extends Table {
 		
 	}
 
+	@Override
+	protected String initTableType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void getSectionsFrom(TreeNode node) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

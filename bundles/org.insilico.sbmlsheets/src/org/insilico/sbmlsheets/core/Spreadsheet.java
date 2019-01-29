@@ -24,27 +24,27 @@ public class Spreadsheet {
 	/**
 	 * The content of the {@link Spreadsheet} modeled as {@link Row} Objects inside a {@link ObservableList}.
 	 */
-	ObservableList<Row> data;
+	private ObservableList<Row> data;
 	
 	/**
 	 * The names of the columns in {@link data} as a {@link Row} object.
 	 */
-	HeadRow head;
+	private HeadRow head;
 		
 	/**
 	 * Which type of SBML table is represented
 	 */
-	String tableType;
+	private String tableType;
 	
 	/**
 	 * The Name of the Table 
 	 */
-	String tableName;
+	private String tableName;
 	
 	/**
 	 * The location of the table in the file system
 	 */
-	String fileLocation;
+	private String fileLocation;
 	
 	/**
 	 * Constructor for an empty {@link Spreadsheet}
@@ -52,8 +52,8 @@ public class Spreadsheet {
 	 * @param tableType
 	 */
 	public Spreadsheet(String uri, String tableType, String tableName) {
-		this.tableType = tableType;
-		this.tableName = tableName;
+		this.setTableType(tableType);
+		this.setTableName(tableName);
 		head = HeadRow.createHead(tableType);
 		data = FXCollections.observableArrayList();
 
@@ -70,11 +70,15 @@ public class Spreadsheet {
 	 * @param uri The location of the representing CSV
 	 */
 	public Spreadsheet( String uri, String tableType, String tableName, List<List<String>> data) {
-		this.head = HeadRow.createHead(data.remove(0));
+		if (tableType.equals("")) {
+			this.head = HeadRow.createHead(data.remove(0));
+		} else {
+			this.head = HeadRow.createHead(tableType);
+		}
 		this.data = FXCollections.observableArrayList(convert(data));
 		fillTable();
-		this.tableType = tableType;
-		this.tableName = tableName;
+		this.setTableType(tableType);
+		this.setTableName(tableName);
 		this.fileLocation = uri;
 	}
 		
@@ -216,12 +220,19 @@ public class Spreadsheet {
 		String out = "";
 		out += String.format("%s\n", head.toCSVFormat());
 		for (Row row : data) {
-			out += String.format("%s\n", row.toCSVFormat());
+			if(!rowEmpty(row)) {
+				out += String.format("%s\n", row.toCSVFormat());
+			}
 		}
 		return out;
 		
 	}
 	
+	private boolean rowEmpty(Row row) {
+		
+		return row.isEmpty();
+	}
+
 	@Override
 	public String toString() {
 		String headStr = this.head.toString();
@@ -238,6 +249,30 @@ public class Spreadsheet {
 		}
 		
 		return spreadsheet;
+	}
+
+	public String getTableType() {
+		return tableType;
+	}
+
+	public void setTableType(String tableType) {
+		this.tableType = tableType;
+	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+	
+	public String getFileLocation() {
+		return this.fileLocation;
+	}
+	
+	public void setFileLocation(String fileLocation) {
+		this.fileLocation = fileLocation;
 	}
 	
 }

@@ -72,21 +72,31 @@ public class SBMLBuilder {
 	}
 	
 	public void read(File file) {
-		//TODO
-		System.out.println("TODO readfile");
 		
 		try {
+			String path = project.getUri();
+			
+			project.setSbmlFileName(file.getName());
+			
 			SBMLDocument doc = SBMLReader.read(file);
 			
+			project.setSpecification(doc.getNamespace());
+			
 			Model model = doc.getModel();
+			
+			String sheetPath = path.replace(path.split(File.separator)[path.split(File.separator).length - 1], "");
 
-			List<Spreadsheet> sheets = buildSheets(model);
+			List<Spreadsheet> sheets = buildSheets(model, sheetPath);
 			
 			for (Spreadsheet sheet : sheets) {
-				if (!sheet.equals(null)) {
+				if (sheet != null) {
+					System.out.println("SheetType: "+sheet.getTableType()+" SheetName: "+sheet.getTableName());
+					project.addPathNameType(sheet.getFileLocation(), sheet.getTableName(), sheet.getTableType());
+					System.out.println(project.getPaths());
 					sheet.save();
 				}
 			}
+			
 			
 			
 //			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance()
@@ -113,17 +123,17 @@ public class SBMLBuilder {
 		
 	}
 	
-	private List<Spreadsheet> buildSheets(Model model) {
+	private List<Spreadsheet> buildSheets(Model model, String path) {
 		List<Spreadsheet> sheets = new ArrayList<>();
 		for (int i=0; i<model.getChildCount(); i++) {
-			sheets.add(build(model.getChildAt(i)));
+			sheets.add(build(model.getChildAt(i), path));
 		}
 		return sheets;
 	}
 
-	private Spreadsheet build(TreeNode treeNode) {
-		Table tab = TableFactory.getTableFrom(treeNode);
-		if (!tab.equals(null)) {
+	private Spreadsheet build(TreeNode treeNode, String path) {
+		Table tab = TableFactory.getTableFrom(treeNode, path);
+		if (tab != null) {
 			return tab.buildSpreadsheet();
 		}
 		return null;

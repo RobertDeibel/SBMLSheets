@@ -21,8 +21,8 @@ public class CompartmentTable extends Table {
 	
 	}
 
-	public CompartmentTable(TreeNode treeNode, String path) {
-		super(treeNode, path);	
+	public CompartmentTable(String path, TreeNode treeNode) {
+		super(path, treeNode);	
 		
 	}
 
@@ -30,8 +30,9 @@ public class CompartmentTable extends Table {
 	protected Spreadsheet buildSpreadsheet() {
 		List<List<String>> data = new ArrayList<>();
 		
-		List<String> row = new ArrayList<>();
+		
 		for (TreeNode node : this.sections) {
+			List<String> row = new ArrayList<>();
 			Compartment comp = (Compartment) node;
 			
 			row.add(comp.getId());
@@ -42,20 +43,11 @@ public class CompartmentTable extends Table {
 			addRow(row, data);
 		}
 		
-		
-		
-		return new Spreadsheet(data, this.tableType, this.tableName, this.uri);
+		return new Spreadsheet(this.uri, this.tableType, this.tableName, data);
 		
 	}
 
-	private void addRow(List<String> row, List<List<String>> data) {
-		for (int i=row.size(); i<data.size(); i++) {
-			data.add(new ArrayList<>());
-		}
-		for (int i=0; i<row.size(); i++) {
-			data.get(i).add(row.get(i));
-		}
-	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
