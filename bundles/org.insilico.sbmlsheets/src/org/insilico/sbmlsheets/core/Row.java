@@ -215,7 +215,7 @@ public class Row implements Iterable<StringProperty>{
 
 	public boolean isEmpty() {
 		for (StringProperty value : this.cells) {
-			if (!value.equals(INIT_CELL_VALUE)) {
+			if (!value.getValue().equals(INIT_CELL_VALUE)) {
 				return false;
 			}
 		}

@@ -2,16 +2,23 @@ package org.insilico.sbmlsheets.core.compile;
 
 import javax.swing.tree.TreeNode;
 
+import org.insilico.sbmlsheets.core.Constants;
 import org.insilico.sbmlsheets.core.Spreadsheet;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
 
 public class InitAssignmentsTable extends Table {
+	
+	ListOf<InitialAssignment> sections;
 
-	public InitAssignmentsTable(String path) {
-		super(path);
+	public InitAssignmentsTable(Spreadsheet sheet) {
+		super(sheet);
+		sections = new ListOf<>();
 	}
 
-	public InitAssignmentsTable(TreeNode treeNode, String path) {
-		super(path);
+	public InitAssignmentsTable(String path, TreeNode treeNode) {
+		super(path, treeNode);
 	}
 
 	@Override
@@ -22,12 +29,17 @@ public class InitAssignmentsTable extends Table {
 
 	@Override
 	protected String initTableType() {
-		// TODO Auto-generated method stub
-		return null;
+		return Constants.INIT_ASSIGNMENTS_TABLE;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void getSectionsFrom(TreeNode node) {
+		this.sections = ((ListOf<InitialAssignment>) node);
 	}
 
 	@Override
-	protected void getSectionsFrom(TreeNode node) {
+	protected void addToSBMLModel(Model model) {
 		// TODO Auto-generated method stub
 		
 	}

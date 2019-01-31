@@ -22,16 +22,10 @@ public class SheetProject{
 	
 	private String sbmlFileName;
 	
-	private String modelName;
-	
 	private String uri;
 
 	private String sbmlSpecification = "http://www.sbml.org/sbml/level3/version2/core";
 	
-	private int level;
-	
-	private int version;
-
 	private ObservableMap<String, String> types;
 	
 	public SheetProject(String uri) {
@@ -45,7 +39,7 @@ public class SheetProject{
 
 	public SheetProject(String uri, String name, String specification, List<String> paths, List<String> names, List<String> types) {
 		this.uri = uri;
-		this.sbmlFileName = name;
+		setSbmlFileName(name);
 		this.sbmlSpecification = specification;
 		for (String path : paths) {
 			path = getUri().replace(".sheets", "") + path;
@@ -168,7 +162,10 @@ public class SheetProject{
 
 
 	public void setSbmlFileName(String sbmlFileName) {
-		this.sbmlFileName = sbmlFileName;
+		if (sbmlFileName != null) {
+			this.sbmlFileName = ((sbmlFileName.endsWith(".sbml")) ? sbmlFileName : sbmlFileName.concat(".sbml"));
+		}
+		
 	}
 
 	

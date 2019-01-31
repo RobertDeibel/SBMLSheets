@@ -27,7 +27,7 @@ public class SheetReader {
 				data.add(line);
 			}
 			s.close();
-			return new Spreadsheet(uri, "", "", data);
+			return new Spreadsheet(uri, SheetReader.readTableType(uri), SheetReader.readTableName(uri), data);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

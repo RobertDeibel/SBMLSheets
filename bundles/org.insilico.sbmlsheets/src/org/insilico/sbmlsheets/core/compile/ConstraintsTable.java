@@ -2,17 +2,23 @@ package org.insilico.sbmlsheets.core.compile;
 
 import javax.swing.tree.TreeNode;
 
+import org.insilico.sbmlsheets.core.Constants;
 import org.insilico.sbmlsheets.core.Spreadsheet;
+import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
 
 public class ConstraintsTable extends Table {
+	
+	ListOf<Constraint> sections;
 
-	public ConstraintsTable(String path) {
-		super(path);
+	public ConstraintsTable(Spreadsheet sheet) {
+		super(sheet);
+		sections = new ListOf<>();
 	}
 
-	public ConstraintsTable(TreeNode treeNode, String path) {
-		// TODO Auto-generated constructor stub
-		super(path);
+	public ConstraintsTable(String path, TreeNode treeNode) {
+		super(path, treeNode);
 	}
 
 	@Override
@@ -24,12 +30,17 @@ public class ConstraintsTable extends Table {
 
 	@Override
 	protected String initTableType() {
-		// TODO Auto-generated method stub
-		return null;
+		return Constants.CONSTRAINTS_TABLE;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void getSectionsFrom(TreeNode node) {
+		this.sections = ((ListOf<Constraint>) node);
 	}
 
 	@Override
-	protected void getSectionsFrom(TreeNode node) {
+	protected void addToSBMLModel(Model model) {
 		// TODO Auto-generated method stub
 		
 	}

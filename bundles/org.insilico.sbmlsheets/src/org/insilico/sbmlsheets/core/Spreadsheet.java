@@ -73,6 +73,9 @@ public class Spreadsheet {
 		if (tableType.equals("")) {
 			this.head = HeadRow.createHead(data.remove(0));
 		} else {
+			if (data.get(0).get(0).equals("ID")) {
+				data.remove(0);
+			}
 			this.head = HeadRow.createHead(tableType);
 		}
 		this.data = FXCollections.observableArrayList(convert(data));
@@ -229,7 +232,6 @@ public class Spreadsheet {
 	}
 	
 	private boolean rowEmpty(Row row) {
-		
 		return row.isEmpty();
 	}
 

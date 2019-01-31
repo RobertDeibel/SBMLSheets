@@ -2,17 +2,24 @@ package org.insilico.sbmlsheets.core.compile;
 
 import javax.swing.tree.TreeNode;
 
+import org.insilico.sbmlsheets.core.Constants;
 import org.insilico.sbmlsheets.core.Spreadsheet;
+import org.sbml.jsbml.Event;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
 
 public class EventTable extends Table {
+	
+	ListOf<Event> sections;
 
-	public EventTable(String path) {
-		super(path);
+	public EventTable(Spreadsheet sheet) {
+		super(sheet);
+		sections = new ListOf<>();
 	}
 
-	public EventTable(TreeNode treeNode, String path) {
+	public EventTable(String path, TreeNode treeNode) {
 		// TODO Auto-generated constructor stub
-		super(path);
+		super(path,treeNode);
 	}
 
 	@Override
@@ -23,12 +30,17 @@ public class EventTable extends Table {
 
 	@Override
 	protected String initTableType() {
-		// TODO Auto-generated method stub
-		return null;
+		return Constants.EVENTS_TABLE;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void getSectionsFrom(TreeNode node) {
+		this.sections = ((ListOf<Event>) node);
 	}
 
 	@Override
-	protected void getSectionsFrom(TreeNode node) {
+	protected void addToSBMLModel(Model model) {
 		// TODO Auto-generated method stub
 		
 	}

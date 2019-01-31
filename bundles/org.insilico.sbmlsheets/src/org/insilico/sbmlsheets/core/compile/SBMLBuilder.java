@@ -8,33 +8,24 @@ import java.util.regex.Pattern;
 
 import org.insilico.sbmlsheets.core.Constants;
 import org.insilico.sbmlsheets.core.SheetProject;
+import org.insilico.sbmlsheets.core.SheetReader;
 import org.insilico.sbmlsheets.core.Spreadsheet;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.xml.stax.SBMLWriter;
 
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.tree.TreeNode;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Class for reading and writing/building SBML files
@@ -60,17 +51,13 @@ public class SBMLBuilder {
 		
 		this.project = project;
 		this.model = new ArrayList<>();
-		List<String> paths = project.getPaths();
-		Map<String, String> types = project.getTypes();
-		Map<String, String> names = project.getNames();
-		for (int i=0; i<project.getPaths().size(); i++) {
-			String path = paths.get(i);
-			model.add(chooseTableToCreate(types.get(path), path, names.get(path)));
-		}
-		
 		
 	}
 	
+	/**
+	 * Reads the {@link File}, converts it into an {@link SBMLDocument} and constructs the tables representing this SBML model.
+	 * @param file The SBML file
+	 */
 	public void read(File file) {
 		
 		try {
@@ -90,9 +77,7 @@ public class SBMLBuilder {
 			
 			for (Spreadsheet sheet : sheets) {
 				if (sheet != null) {
-					System.out.println("SheetType: "+sheet.getTableType()+" SheetName: "+sheet.getTableName());
 					project.addPathNameType(sheet.getFileLocation(), sheet.getTableName(), sheet.getTableType());
-					System.out.println(project.getPaths());
 					sheet.save();
 				}
 			}
@@ -123,6 +108,13 @@ public class SBMLBuilder {
 		
 	}
 	
+	/**
+	 * Returns a {@link List} of {@link Spreadsheet}s bulilt from the provided {@link Model} the 
+	 * {@link Spreadsheet}s are initialized with {@code path} as their uri.
+	 * @param model The {@link Model} for building of the {@link Spreadsheet}s
+	 * @param path The uri for the {@link Spreadsheet}s
+	 * @return a {@link List} of {@link Spreadsheet}s
+	 */
 	private List<Spreadsheet> buildSheets(Model model, String path) {
 		List<Spreadsheet> sheets = new ArrayList<>();
 		for (int i=0; i<model.getChildCount(); i++) {
@@ -130,7 +122,13 @@ public class SBMLBuilder {
 		}
 		return sheets;
 	}
-
+	
+	/**
+	 * Returns a {@link Spreadsheet} built from the {@code treeNode} and initialized with {@code path} as its uri
+	 * @param treeNode The {@link TreeNode} to build the {@link Spreadsheet}. Must be a {@link ListOf} of some SBML model
+	 * @param path The uri for the {@link Spreadsheet}
+	 * @return A {@link Spreadsheet} built from the {@code treeNode}
+	 */
 	private Spreadsheet build(TreeNode treeNode, String path) {
 		Table tab = TableFactory.getTableFrom(treeNode, path);
 		if (tab != null) {
@@ -156,32 +154,55 @@ public class SBMLBuilder {
 	 * Builds the SBML representation and returns it as a String
 	 * @return The compiled SBML representation of the {@link #model}
 	 */
-	public String compile() {
+	public void compile() {
 		//TODO
 		System.out.println("TODO compile");
-		try {	
+		String sbmlPath = project.getUri().replace(".sheets", "") + project.getSbmlFileName();
+		
+		String sbmlSpecification = project.getSpecification(); 
+
+		SBMLDocument doc = new SBMLDocument();
+		doc.setNamespace(sbmlSpecification);
+		
+		doc.setLevel(Integer.parseInt(getLevel(sbmlSpecification)));
+		doc.setVersion(Integer.parseInt(getVersion(sbmlSpecification)));
+		
+		Model model = new Model();
+		doc.setModel(model);
+		model.setLevel(doc.getLevel());
+		model.setVersion(doc.getVersion());
+		
+		List<Spreadsheet> sheets = new ArrayList<>();
+		for (String path : project.getPaths()) {
+			sheets.add(SheetReader.readSheetFromFile(path));
+		}
+		
+		for (Spreadsheet sheet : sheets) {
+			Table tab = chooseTableToCreate(sheet);
+			if(tab != null) {
+				tab.addToSBMLModel(model);
+			}
+		}
+		
+		SBMLWriter writer = new SBMLWriter();
+		
+		try {
 			
-			String sbmlSpecification = project.getSpecification(); 
-			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance()
-										.newDocumentBuilder();
-			
-			//root
-			Document doc = docBuilder.newDocument();
-			Element sbmlRoot = doc.createElementNS(sbmlSpecification, "sbml");
-			doc.appendChild(sbmlRoot);
-			sbmlRoot.setAttribute("level", getLevel(sbmlSpecification));
-			sbmlRoot.setAttribute("version", getVersion(sbmlSpecification));
-			//model node; the other nodes are inserted as its children
-			Element model = doc.createElement("model");
-			sbmlRoot.appendChild(model);
+			writer.write(doc, sbmlPath);
 			
 			
-			
-		} catch (ParserConfigurationException e) {
+		} catch (SBMLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		
+		
 	}
 
 	/**
@@ -190,7 +211,7 @@ public class SBMLBuilder {
 	 * @return The Version number of the SBML specification as String
 	 */
 	private String getVersion(String sbmlSpecification) {
-		final String versionPattern = "(?<=version).";
+		String versionPattern = "(?<=version)\\d";
 		return getPattern(versionPattern, sbmlSpecification);
 		
 	}
@@ -204,6 +225,7 @@ public class SBMLBuilder {
 	private String getPattern(String regex, String target) {
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(target);
+		matcher.find();
 		return matcher.group().toString();
 	}
 
@@ -213,48 +235,17 @@ public class SBMLBuilder {
 	 * @return The Level number of the SBML specification as String
 	 */
 	private String getLevel(String sbmlSpecification) {
-		final String levelPattern = "(?<=level).";
+		final String levelPattern = "(?<=level)\\d";
 		return getPattern(levelPattern, sbmlSpecification);
 	}
-
-	private Table chooseTableToCreate(String type, String path, String name) {
-		Table object = null;
-		switch (type) {
-		case Constants.COMPARTMENT_TABLE:
-			object = new CompartmentTable(path);
-			break;
-		case Constants.CONSTRAINTS_TABLE:
-			object = new ConstraintsTable(path);
-			break;
-		case Constants.EVENTS_TABLE:
-			object = new EventTable(path);
-			break;
-		case Constants.FUNCTION_DEF_TABLE:
-			object = new FunctionDefTable(path);
-			break;
-		case Constants.INIT_ASSIGNMENTS_TABLE:
-			object = new InitAssignmentsTable(path);
-			break;
-		case Constants.PARAMETERS_TABLE:
-			object = new ParametersTable(path);
-			break;
-		case Constants.REACTIONS_TABLE:
-			object = new ReactionsTable(path);
-			break;
-		case Constants.RULES_TABLE:
-			object = new RulesTable(path);
-			break;
-		case Constants.SPECIES_TABLE:
-			object = new SpeciesTable(path);
-			break;
-		case Constants.UNIT_DEF_TABLE:
-			object = new UnitDefTable(path);
-			break;
-		default:
-			System.err.println("Oh No! The specified table is not available!");
-			break;
-		}
-		return object;
+	
+	/**
+	 * Returns a {@link Table} based on the provided {@link Spreadsheet}.
+	 * @param sheet The {@link Spreadsheet} the selection is based on
+	 * @return A {@link Table} based on the provided {@link Spreadsheet}.
+	 */
+	private Table chooseTableToCreate(Spreadsheet sheet) {
+		return TableFactory.getTableFrom(sheet);
 	}
 	
 }

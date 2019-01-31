@@ -3,6 +3,7 @@ package org.insilico.sbmlsheets.core.compile;
 import javax.swing.tree.TreeNode;
 
 import org.insilico.sbmlsheets.core.Constants;
+import org.insilico.sbmlsheets.core.Spreadsheet;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Event;
@@ -29,16 +30,24 @@ public final class TableFactory {
 			return new CompartmentTable(path, treeNode);
 		}
 		if (firstElem instanceof Constraint) {
-			return new ConstraintsTable(treeNode, ConstraintsTable.class.getSimpleName()+".csv");
+			//TODO
+			path += ConstraintsTable.class.getSimpleName()+".csv";
+			return new ConstraintsTable(path, treeNode);
 		}
 		if (firstElem instanceof Event) {
-			return new EventTable(treeNode, EventTable.class.getSimpleName()+".csv");
+			//TODO
+			path += EventTable.class.getSimpleName()+".csv";
+			return new EventTable(path, treeNode);
 		}
 		if (firstElem instanceof FunctionDefinition) {
-			return new FunctionDefTable(treeNode, FunctionDefTable.class.getSimpleName()+".csv");
+			//TODO
+			path += FunctionDefTable.class.getSimpleName()+".csv";
+			return new FunctionDefTable(path, treeNode);
 		}
 		if (firstElem instanceof InitialAssignment) {
-			return new InitAssignmentsTable(treeNode, InitAssignmentsTable.class.getSimpleName()+".csv");
+			//TODO
+			path += InitAssignmentsTable.class.getSimpleName()+".csv";
+			return new InitAssignmentsTable(path, treeNode);
 		}
 		if (firstElem instanceof Parameter) {
 			path += ParametersTable.class.getSimpleName()+".csv";
@@ -49,7 +58,9 @@ public final class TableFactory {
 			return new ReactionsTable(path, treeNode);
 		}
 		if (firstElem instanceof Rule) {
-			return new RulesTable(treeNode, RulesTable.class.getSimpleName()+".csv");
+			//TODO
+			path += RulesTable.class.getSimpleName()+".csv";
+			return new RulesTable(path, treeNode);
 		}
 		if (firstElem instanceof Species) {
 			path += SpeciesTable.class.getSimpleName()+".csv";
@@ -61,6 +72,35 @@ public final class TableFactory {
 		}
 		return null;
 		
+	}
+
+	public static Table getTableFrom(Spreadsheet sheet) {
+		switch (sheet.getTableType()) {
+		case Constants.COMPARTMENT_TABLE:
+			return new CompartmentTable(sheet);
+		case Constants.CONSTRAINTS_TABLE:
+			return new ConstraintsTable(sheet);
+		case Constants.EVENTS_TABLE:
+			return new EventTable(sheet);
+		case Constants.FUNCTION_DEF_TABLE:
+			return new FunctionDefTable(sheet);
+		case Constants.INIT_ASSIGNMENTS_TABLE:
+			return new InitAssignmentsTable(sheet);
+		case Constants.PARAMETERS_TABLE:
+			return new ParametersTable(sheet);
+		case Constants.REACTIONS_TABLE:
+			return new ReactionsTable(sheet);
+		case Constants.RULES_TABLE:
+			return new RulesTable(sheet);
+		case Constants.SPECIES_TABLE:
+			return new SpeciesTable(sheet);
+		case Constants.UNIT_DEF_TABLE:
+			return new UnitDefTable(sheet);
+		default:
+			System.err.println("Oh No! The specified table is not available!");
+			break;
+		}
+		return null;
 	}
 
 
