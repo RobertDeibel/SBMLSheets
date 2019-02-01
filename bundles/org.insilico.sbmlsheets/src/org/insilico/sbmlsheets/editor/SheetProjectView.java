@@ -598,7 +598,7 @@ public class SheetProjectView {
 	private void deleteLine(VBox spreadsheetListing, HBox sheetLine) {
 		spreadsheetListing.getChildren().remove(sheetLine);
 		for (Node node : sheetLine.getChildrenUnmodifiable()){
-			if (node.getId().equals("fileSelection")) {
+			if (node.getId() != null && node.getId().equals("fileSelection")) {
 				String path = ((ComboBox<String>) node).getValue();
 				project.removeAssociated(path);
 			}
