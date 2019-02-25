@@ -23,7 +23,12 @@ public final class TableFactory {
 	private TableFactory() {}
 	
 	public static Table getTableFrom(TreeNode treeNode, String path) {
-		TreeNode firstElem = treeNode.getChildAt(0);
+		TreeNode firstElem = null;
+		if (treeNode.getChildCount() > 0) {
+			 firstElem = treeNode.getChildAt(0);
+		} else {
+			return null;
+		}
 		
 		if (firstElem instanceof Compartment) {
 			path += CompartmentTable.class.getSimpleName()+".csv";

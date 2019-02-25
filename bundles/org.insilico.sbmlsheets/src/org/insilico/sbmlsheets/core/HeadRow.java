@@ -42,7 +42,7 @@ public class HeadRow extends Row {
 
 	private static final List<String> UNIT_DEF_HEAD_VALUE = Arrays.asList("Kind", "Exponent", "Multiplier", "Scale");
 	
-	private static final String INIT_CELL_VALUE = "Hier koennte Ihre Werbung stehen";
+	private static final String INIT_CELL_VALUE = "Default Column";
 
 	/**
 	 * Private constructor {@link HeadRow} object without parameters.
@@ -75,10 +75,14 @@ public class HeadRow extends Row {
 	 */
 	static HeadRow createHead(String tableType) {
 		List<String> head = new ArrayList<>();
+		if (tableType.equals("")) {
+			return new HeadRow();
+		} else {
 		head.addAll(GEN_DEF_HEAD_VALUE);
 		head.addAll(getTableColsFor(tableType));
 		
 		return new HeadRow(head);
+		}
 	}
 	
 	/**

@@ -206,7 +206,7 @@ public class Row implements Iterable<StringProperty>{
 	public String toCSVFormat() {
 		String[] cellsAsArray = new String[cells.size()];
 		for (int i=0; i<cells.size();i++) {
-			cellsAsArray[i] = this.getCell(i);
+			cellsAsArray[i] = "\""+this.getCell(i)+"\"";
 		}
 		return String.join(",", cellsAsArray);
 	}

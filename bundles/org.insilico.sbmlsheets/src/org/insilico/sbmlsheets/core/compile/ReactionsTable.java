@@ -48,7 +48,11 @@ public class ReactionsTable extends Table {
 			row.add(getReactionFormula(reaction));
 			row.add(reaction.getCompartment());
 			row.add(getRegulator(reaction));
-			row.add(reaction.getKineticLaw().getMath().toFormula());
+			if(reaction.isSetKineticLaw()) {
+				row.add(reaction.getKineticLaw().getMath().toFormula());
+			} else {
+				row.add("");
+			}
 			row.add(Integer.toString(reaction.getSBOTerm()));
 			row.add(Boolean.toString(reaction.getReversible()));
 			
@@ -140,7 +144,9 @@ public class ReactionsTable extends Table {
 					reaction.setListOfModifiers(null);
 					break;
 				case "KineticLaw":
-					reaction.setKineticLaw(makeKineticLaw(cell.getValue()));
+					if (!cell.getValue().equals("")) {
+						reaction.setKineticLaw(makeKineticLaw(cell.getValue()));
+					}
 					break;
 				case "SBOTerm":
 					if(! (cell.getValue().equals("") || Integer.parseInt(cell.getValue()) < 0)) {

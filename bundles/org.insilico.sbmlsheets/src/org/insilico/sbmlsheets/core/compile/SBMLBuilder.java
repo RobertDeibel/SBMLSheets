@@ -88,7 +88,6 @@ public class SBMLBuilder {
 //										.newDocumentBuilder();
 //			Document doc = docBuilder.parse(file);
 			
-			//TODO Validation
 			
 //			if(doc.checkConsistency() == 0) {
 //				System.out.println("Consistent");
@@ -96,10 +95,8 @@ public class SBMLBuilder {
 //			}
 			
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NullPointerException e) {
 			System.err.println("Da ist ein Sheet Null");
@@ -118,7 +115,10 @@ public class SBMLBuilder {
 	private List<Spreadsheet> buildSheets(Model model, String path) {
 		List<Spreadsheet> sheets = new ArrayList<>();
 		for (int i=0; i<model.getChildCount(); i++) {
-			sheets.add(build(model.getChildAt(i), path));
+			Spreadsheet sheet = build(model.getChildAt(i), path);
+			if(sheet != null) {
+				sheets.add(sheet);
+			}
 		}
 		return sheets;
 	}
@@ -155,17 +155,18 @@ public class SBMLBuilder {
 	 * @return The compiled SBML representation of the {@link #model}
 	 */
 	public void compile() {
-		//TODO
-		System.out.println("TODO compile");
 		String sbmlPath = project.getUri().replace(".sheets", "") + project.getSbmlFileName();
 		
 		String sbmlSpecification = project.getSpecification(); 
 
 		SBMLDocument doc = new SBMLDocument();
 		doc.setNamespace(sbmlSpecification);
-		
-		doc.setLevel(Integer.parseInt(getLevel(sbmlSpecification)));
-		doc.setVersion(Integer.parseInt(getVersion(sbmlSpecification)));
+		if (getLevel(sbmlSpecification) != "-1") {
+			doc.setLevel(Integer.parseInt(getLevel(sbmlSpecification)));
+		}
+		if (getVersion(sbmlSpecification) != "-1") {
+			doc.setVersion(Integer.parseInt(getVersion(sbmlSpecification)));
+		}
 		
 		Model model = new Model();
 		doc.setModel(model);
@@ -192,13 +193,10 @@ public class SBMLBuilder {
 			
 			
 		} catch (SBMLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -225,8 +223,10 @@ public class SBMLBuilder {
 	private String getPattern(String regex, String target) {
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(target);
-		matcher.find();
-		return matcher.group().toString();
+		if (matcher.find()) {
+			return matcher.group().toString();
+		}
+		return "3";
 	}
 
 	/**

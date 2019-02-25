@@ -689,18 +689,5 @@ public class SheetProjectView {
 		}
 	}
 	
-	private class ChoseSBMLEventHandler implements EventHandler<ActionEvent> {
-		
-		@Override
-		public void handle(ActionEvent event) {
-			System.out.print("Reading SBML file...");
-			choseSBMLfile();
-			System.out.println("Done");
-		}
-		
-	}
-	
-
-
 
 }

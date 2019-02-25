@@ -14,20 +14,47 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 
+/**
+ * Class for controlling the composition of a project containing multiple Spreadsheets and the possibility to export as an SBML file
+ * @author Robert Deibel
+ *
+ */
 public class SheetProject{
 	
+	/**
+	 * A {@link List} of all paths of .csv files associated with this project
+	 */
 	private ObservableList<String> paths;
 	
+	/**
+	 * A {@link Map} of the names of the .csv files. The paths from {@link #paths} are the key.
+	 */
 	private ObservableMap<String, String> names;
 	
+	/**
+	 * The file name of the SBML file if it is exported
+	 */
 	private String sbmlFileName;
 	
+	/**
+	 * The path to the file associated with an instance of this class
+	 */
 	private String uri;
 
+	/**
+	 * The Specification used for SBML export
+	 */
 	private String sbmlSpecification = "http://www.sbml.org/sbml/level3/version2/core";
 	
+	/**
+	 * A {@link Map} of the {@link Table} types of the .csv files. The paths from {@link #paths} are the key.
+	 */
 	private ObservableMap<String, String> types;
 	
+	/**
+	 * Constructor for instantiation of an empty project
+	 * @param uri The path to the file associated with an instance of this class. {@link #uri}
+	 */
 	public SheetProject(String uri) {
 		this.setUri(uri);
 		paths = FXCollections.observableArrayList();
@@ -36,7 +63,15 @@ public class SheetProject{
 		
 	}
 
-
+	/**
+	 * Constructor for instantiation of a loaded project.
+	 * @param uri The path to the file associated with an instance of this class. {@link #uri}
+	 * @param name The file name of the SBML file if it is exported
+	 * @param specification The Specification used for SBML export
+	 * @param paths A {@link List} of all paths of .csv files associated with this project
+	 * @param names A {@link Map} of the names of the .csv files. The paths from {@link #paths} are the key.
+	 * @param types A {@link Map} of the {@link Table} types of the .csv files. The paths from {@link #paths} are the key.
+	 */
 	public SheetProject(String uri, String name, String specification, List<String> paths, List<String> names, List<String> types) {
 		this.uri = uri;
 		setSbmlFileName(name);
@@ -54,6 +89,11 @@ public class SheetProject{
 	}
 
 
+	/**
+	 * 
+	 * @param path
+	 * @param type
+	 */
 	private void addTypeToPath(String path, String type) {
 		this.types.put(path, type);
 	}
