@@ -41,7 +41,6 @@ public class SheetProjectDocumentLoader extends ContextFunction{
     @Override
     public Object compute(IEclipseContext context, String contextKey) {
         System.out.println("Compute...");
-        System.out.println("HIER KOMMT EIN PROJECT");
         Object urlVal = context.get(DOCUMENT_URL);
 
         if (urlVal == null) {

@@ -21,8 +21,9 @@ public class SheetWriter {
 		}
 	}
 
-	public static void newCSV(String filePath) {
-			writeSheetToFile(filePath, "");
+	public static void newCSV(String filePath, String tableType) {
+		Spreadsheet newSheet = new Spreadsheet(filePath, tableType, "");
+		writeSheetToFile(filePath, newSheet.toCSVFormat());
 	}
 
 

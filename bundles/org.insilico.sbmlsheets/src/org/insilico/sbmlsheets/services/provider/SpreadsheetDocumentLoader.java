@@ -41,7 +41,6 @@ public class SpreadsheetDocumentLoader extends ContextFunction {
     @Override
     public Object compute(IEclipseContext context, String contextKey) {
         System.out.println("Compute...");
-        System.out.println("blubblub");
         Object urlVal = context.get(DOCUMENT_URL);
 
         if (urlVal == null) {

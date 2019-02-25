@@ -623,6 +623,19 @@ public class SheetProjectView {
 		dialog.initModality(Modality.APPLICATION_MODAL);
 		//a TextField for the new file name
 		TextField fileName = new TextField("New File Name");
+		ComboBox<String> tableType = new ComboBox<String>();
+		tableType.setId("tableSelection");
+		tableType.setPromptText("Select Table Type");
+		tableType.setFocusTraversable(true);
+		//set the drop-down list of tableSelection as Constants.TABLE_TYPES
+		String[] tableTypes = new String[Constants.TABLE_TYPES.length+1];
+		tableTypes[0] = "Empty Table";
+		for (int i=1;i<=Constants.TABLE_TYPES.length;i++) {
+			tableTypes[i] = Constants.TABLE_TYPES[i-1];
+		}
+		
+		tableType.setItems(FXCollections.observableArrayList(tableTypes));
+		
 		fileName.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
 			@Override
@@ -631,8 +644,10 @@ public class SheetProjectView {
 					//first commit the current value
 					fileName.commitValue();
 					//create the new csv
-					newCSV(fileName.getText());
-					dialog.hide();
+					if(fileName.getText() != null && tableType != null) {
+						newCSV(fileName.getText(), tableType.getValue());
+						dialog.hide();
+					}
 				}
 			}
 
@@ -644,9 +659,10 @@ public class SheetProjectView {
 			
 			@Override
 			public void handle(ActionEvent event) {
-				newCSV(fileName.getText());
-				dialog.hide();
-				
+				if (fileName.getText() != null && tableType != null) {
+					newCSV(fileName.getText(), tableType.getValue());
+					dialog.hide();
+				}
 			}
 		});
 		
@@ -661,7 +677,7 @@ public class SheetProjectView {
 		});
 		
 		//add the controls and filed
-		controls.getChildren().addAll(fileName, createButton, cancelButton);
+		controls.getChildren().addAll(fileName,tableType, createButton, cancelButton);
 		//set graphical position as the center of the screen
 		double xPosn = (Screen.getPrimary().getVisualBounds().getWidth() / 2) - (controls.getWidth() / 2);
 		double yPosn = (Screen.getPrimary().getVisualBounds().getHeight() / 2) - (controls.getHeight() / 2);
@@ -681,10 +697,10 @@ public class SheetProjectView {
 	 * Create a new csv file in the current directory.
 	 * @param fileName The name of the new csv file. It is irrelevant if it ends with .csv
 	 */
-	private void newCSV(String fileName) {
+	private void newCSV(String fileName, String tableType) {
 		String filePath = project.getUri().replace(".sheets", "") + fileName + (fileName.endsWith("csv") ? "" :".csv");
 		if (!pathsInDir.contains(filePath)) {
-			SheetWriter.newCSV(filePath);
+			SheetWriter.newCSV(filePath, tableType);
 			pathsInDir.add(filePath);
 		}
 	}

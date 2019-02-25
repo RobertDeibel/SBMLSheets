@@ -75,7 +75,7 @@ public class HeadRow extends Row {
 	 */
 	static HeadRow createHead(String tableType) {
 		List<String> head = new ArrayList<>();
-		if (tableType.equals("")) {
+		if (tableType.equals("")||tableType.equals("Empty Table")) {
 			return new HeadRow();
 		} else {
 		head.addAll(GEN_DEF_HEAD_VALUE);
